@@ -5,15 +5,21 @@ public class gunClass : MonoBehaviour {
 
 	private string Gun;
 	private float Rpm;
+	private float MagSize;
+	private float Mags;
 	private float Damage;
 	private float Range;
+	private float Kick;
 	private bool Selected;
 
-	public gunClass(string gun, float rpm, float damage, float range){
+	public gunClass(string gun, float rpm, float magSize, float mags, float damage, float range, float kick){
 		this.Gun = gun;
 		this.Rpm = rpm;
+		this.MagSize = magSize;
+		this.Mags = mags;
 		this.Damage = damage;
 		this.Range = range;
+		this.Kick = kick;
 		this.Selected = false;
 	}
 
@@ -33,6 +39,22 @@ public class gunClass : MonoBehaviour {
 		return Rpm;
 	}
 
+	public void setMagSize(float magSize){
+		this.MagSize = magSize;
+	}
+	
+	public float getMagSize(){
+		return MagSize;
+	}
+
+	public void setMags(float mags){
+		this.Mags = mags;
+	}
+	
+	public float getMags(){
+		return Mags;
+	}
+
 	public void setDamage(float damage){
 		this.Damage = damage;
 	}
@@ -47,6 +69,14 @@ public class gunClass : MonoBehaviour {
 	
 	public float getRange(){
 		return Range;
+	}
+
+	public void setKick(float kick){
+		this.Kick = kick;
+	}
+	
+	public float getKick(){
+		return Kick;
 	}
 
 	public void setSelected(bool selected){
