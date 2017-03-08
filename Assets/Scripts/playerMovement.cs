@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent (typeof(CharacterController))]
 public class playerMovement : MonoBehaviour {
 
 	public float speedMult = 5.0f;
 	public float sensMult = 5.0f;
 	public float lookRange = 60.0f;
+	public float jump = 5.0f;
 
 	float vertRotation = 0f;
 	float verticalVel = 0f;
@@ -15,7 +17,7 @@ public class playerMovement : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		Screen.lockCursor = true;
-		charControl = GetComponent<CharacterController>;
+		charControl = GetComponent<CharacterController>();
 	}
 	
 	// Update is called once per frame
@@ -28,12 +30,16 @@ public class playerMovement : MonoBehaviour {
 
 		vertRotation -= rotY;
 		vertRotation = Mathf.Clamp (vertRotation, -lookRange, lookRange);
-		Camera.main.transform.rotation = Quaternion.Euler (vertRotation, 0, 0);
+		charControl.transform.rotation = Quaternion.Euler (vertRotation, 0, 0);
 
 		float forwardSpeed = Input.GetAxis ("Vertical") * speedMult;
 		float strafeSpeed = Input.GetAxis ("Horizontal") * speedMult;
 
 		verticalVel += Physics.gravity.y * Time.deltaTime;
+
+		if (charControl.isGrounded && Input.GetButtonDown("Jump")) {
+			verticalVel = jump;
+		}
 
 		Vector3 speed = new Vector3 (strafeSpeed, verticalVel, forwardSpeed);
 
