@@ -28,7 +28,7 @@ public class playerMovement : MonoBehaviour {
 	void Update () {
 
 		if (fired) {
-			StartCoroutine(SlerpRot(Camera.main.transform.rotation, startPos, 1));
+			StartCoroutine(SlerpRot(Camera.main.transform.localRotation, startPos, 0.5f));
 		}
 
 		float rotX = Input.GetAxis ("Mouse X") * sensMult;
@@ -64,12 +64,7 @@ public class playerMovement : MonoBehaviour {
 	}
 
 	public void verticalRoation(float rotY, float starttime){
-		Debug.Log(Camera.main.transform.localRotation.eulerAngles.x);
-		startTime = starttime;
-		vertRotation -= rotY - (Input.GetAxis ("Mouse X") * sensMult);
-		vertRotation = Mathf.Clamp (vertRotation, -lookRange, lookRange);
-		Camera.main.transform.localRotation = Quaternion.Euler (vertRotation, 0, 0);
-		Debug.Log(Camera.main.transform.localRotation.eulerAngles.x);
+		Camera.main.transform.localRotation = Quaternion.Euler (-(Camera.main.transform.localRotation.x + rotY), 0, 0);
 	}
 
 	IEnumerator SlerpRot(Quaternion startRot, Quaternion endRot, float slerpTime) 
@@ -78,7 +73,7 @@ public class playerMovement : MonoBehaviour {
 		float elapsed = 0;
 		while(elapsed < slerpTime) 
 		{
-			elapsed += Time.deltaTime;
+			elapsed += 1 * Time.deltaTime;
 			
 			Camera.main.transform.localRotation = Quaternion.Slerp(startRot, endRot, elapsed / slerpTime);
 			yield return null;

@@ -1,9 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\playerMovement.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\shoot.cs">
     <Files>
-      <File FileName="Assets\Scripts\playerMovement.cs" Line="69" Column="25" />
-      <File FileName="Assets\Scripts\shoot.cs" Line="22" Column="54" />
+      <File FileName="Assets\Scripts\gunMaster.cs" Line="18" Column="14" />
+      <File FileName="Assets\Scripts\shoot.cs" Line="19" Column="50" />
+      <File FileName="Assets\Scripts\Recoil.cs" Line="55" Column="19" />
+      <File FileName="Assets\Scripts\weaponRecoil.cs" Line="25" Column="47" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

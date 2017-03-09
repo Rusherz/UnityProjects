@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class gunClass : MonoBehaviour {
+public class gunClass {
 
 	private string Gun;
 	private float Rpm;
@@ -10,7 +10,6 @@ public class gunClass : MonoBehaviour {
 	private float Damage;
 	private float Range;
 	private float Kick;
-	private bool Selected;
 
 	public gunClass(string gun, float rpm, float magSize, float mags, float damage, float range, float kick){
 		this.Gun = gun;
@@ -20,7 +19,6 @@ public class gunClass : MonoBehaviour {
 		this.Damage = damage;
 		this.Range = range;
 		this.Kick = kick;
-		this.Selected = false;
 	}
 
 	public void setGun(string gun){
@@ -77,14 +75,6 @@ public class gunClass : MonoBehaviour {
 	
 	public float getKick(){
 		return Kick;
-	}
-
-	public void setSelected(bool selected){
-		this.Selected = selected;
-	}
-	
-	public bool getSelected(){
-		return Selected;
 	}
 
 }
