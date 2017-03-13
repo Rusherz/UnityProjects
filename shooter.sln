@@ -7,6 +7,8 @@ Project("{D3E9A99A-09A8-C6D7-FB8C-78CF4E5A9A2C}") = "shooter", "Assembly-CSharp.
 EndProject
 Project("{D3E9A99A-09A8-C6D7-FB8C-78CF4E5A9A2C}") = "shooter", "Assembly-UnityScript-firstpass.unityproj", "{2A8EE375-6896-C84B-3B37-6F7378CCC0CB}"
 EndProject
+Project("{D3E9A99A-09A8-C6D7-FB8C-78CF4E5A9A2C}") = "shooter", "Assembly-UnityScript.unityproj", "{1F1A00B4-53B4-642C-08E6-D274B47AA97F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,11 +27,15 @@ Global
 		{2A8EE375-6896-C84B-3B37-6F7378CCC0CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A8EE375-6896-C84B-3B37-6F7378CCC0CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A8EE375-6896-C84B-3B37-6F7378CCC0CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F1A00B4-53B4-642C-08E6-D274B47AA97F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F1A00B4-53B4-642C-08E6-D274B47AA97F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F1A00B4-53B4-642C-08E6-D274B47AA97F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F1A00B4-53B4-642C-08E6-D274B47AA97F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																								GlobalSection(MonoDevelopProperties) = preSolution
+																														GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1

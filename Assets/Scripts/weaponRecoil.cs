@@ -11,7 +11,6 @@ public class weaponRecoil : MonoBehaviour {
 	public void setStartPoint () {
 		obj = gunMaster.loadedModel;
 		startPoint = obj.transform.localPosition;
-		Debug.Log ("starting position: " + startPoint);
 	}
 	
 	void update(){
@@ -28,7 +27,6 @@ public class weaponRecoil : MonoBehaviour {
 			} else {
 				recoil = 0f;
 				// Dampen towards the target rotation
-				Debug.Log("current position: " + obj.transform.localPosition + " starting position: " + startPoint);
 				obj.transform.localPosition = Vector3.Lerp (startPoint, new Vector3 (startPoint.x, startPoint.y, obj.transform.localPosition.z), Time.deltaTime * 2f);
 			}
 		}

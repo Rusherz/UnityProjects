@@ -63,7 +63,6 @@ public class Recoil : MonoBehaviour
 	{
 		if (gunMaster.selected != -1 && weaponRecoil.obj != null) {
 			if (!once) {
-				Debug.Log(once);
 				start ();
 				once = true;
 			}

@@ -7,6 +7,7 @@ public class shoot : MonoBehaviour {
 	private Ray ray;
 	private float firing = 0;
 	private GameObject parent;
+	private Camera cam;
 
 	float timeRemaining = 0;
 
@@ -16,6 +17,7 @@ public class shoot : MonoBehaviour {
 	void Start () {
 		Screen.lockCursor = true; 
 		gm = GetComponent<gunMaster> ();
+		cam = GetComponentInChildren<Camera> ();
 		parent = GameObject.FindGameObjectWithTag ("ADS");
 	}
 	
@@ -25,10 +27,8 @@ public class shoot : MonoBehaviour {
 		if (Input.GetMouseButton (0) && timeRemaining <= 0) {
 			if(gunMaster.selected != -1){
 				timeRemaining = 60 / gm.guns[gunMaster.selected].getRpm();
-				Debug.Log(60 / gm.guns[gunMaster.selected].getRpm());
 
 				if(!Input.GetMouseButton(1) && firing != 0){
-					Debug.Log(firing);
 					firing += 1;       
 					float randomRadius = Random.Range( 0, firing / 10 ); 
 					float randomAngle = Random.Range ( 0, 2f * Mathf.PI );
@@ -39,20 +39,25 @@ public class shoot : MonoBehaviour {
 						randomRadius * Mathf.Sin( randomAngle ),
 						10f
 						);
-					direction = Camera.main.transform.TransformDirection( direction.normalized );
-					ray = new Ray( Camera.main.transform.position, direction );
+					direction = cam.transform.TransformDirection( direction.normalized );
+					ray = new Ray( cam.transform.position, direction );
 				}else{
 					firing += 1;
-					Debug.Log(firing);
-					ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+					ray = new Ray(cam.transform.position, cam.transform.forward);
 				}
 				RaycastHit hitInfo;
 
+				Fire ();
+
 				if(Physics.Raycast(ray, out hitInfo)){
 					Vector3 hitPoint = hitInfo.point;
+					var hit = hitInfo.collider;
+					if(hit.GetComponent<PlayerHealth>() != null){
+						hit.GetComponent<PlayerHealth>().damage(gm.guns[gunMaster.selected].getDamage());
+					}
 					Instantiate(debris, hitPoint, Quaternion.identity);
 				}
-				Fire ();
+
 			}
 		} else {
 			timeRemaining -= 1 * Time.deltaTime;

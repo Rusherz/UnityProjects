@@ -16,7 +16,7 @@ public class gunMaster : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		addGuns ();
-		parent = GameObject.FindGameObjectWithTag ("weaponHolder");
+		parent = GameObject.Find (transform.parent.name + "/GameObject/Main Camera/weaponHolder");
 		wr = GetComponent<weaponRecoil> ();
 	}
 	
