@@ -11,6 +11,9 @@ public class playerMovement : MonoBehaviour {
 
 	private PlayerHealth ph;
 	private bool wasDead = false;
+	private float timeWait = 0;
+	private int selected = -1;
+	private gunMaster gunmaster;
 
 	public bool fired = false;
 	public Quaternion startPos;
@@ -21,6 +24,7 @@ public class playerMovement : MonoBehaviour {
 
 	private CharacterController charControl;
 	private Camera cam;
+
 	public Transform[] gui;
 
 	// Use this for initialization
@@ -29,19 +33,23 @@ public class playerMovement : MonoBehaviour {
 		charControl = GetComponent<CharacterController>();
 		ph = GetComponent<PlayerHealth>();
 		cam = GetComponentInChildren<Camera> ();
-		Transform temp = this.GetComponentsInParent<Transform> ()[1];
+		gunmaster = GetComponent<gunMaster> ();
+		/*Transform temp = this.GetComponentsInParent<Transform> ()[1];
 		gui = temp.GetComponentsInChildren<Transform> () [6].GetComponentsInChildren<Transform>();
 		// gui[0] = GUI holder
 		// gui[1] = crosshair
 		// gui[2] = DeathMessage
 		// gui[3] = DeathTime
-		gui [2].guiText.enabled = false;
+		gui [2].guiText.enabled = false;*/
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(!ph.getDead()){
+
+			selectWeapon();
+
 			if (fired) {
 				StartCoroutine(SlerpRot(cam.transform.localRotation, startPos, 0.5f));
 			}
@@ -76,17 +84,32 @@ public class playerMovement : MonoBehaviour {
 		}
 	}
 
+	void selectWeapon(){
+		timeWait -= Time.deltaTime;
+		if(timeWait <= 0){
+			if(Input.GetKeyDown(KeyCode.Alpha1) && selected != 0){
+				gunmaster.GetComponent<PhotonView>().RPC("weapon", PhotonTargets.All, 0);
+			}else if(Input.GetKeyDown(KeyCode.Alpha2) && selected != 1){
+				gunmaster.GetComponent<PhotonView>().RPC("weapon", PhotonTargets.All, 1);
+			}else if(Input.GetKeyDown(KeyCode.Alpha3) && selected != 2){
+				gunmaster.GetComponent<PhotonView>().RPC("weapon", PhotonTargets.All, 2);
+			}else if(Input.GetKeyDown(KeyCode.Alpha4) && selected != 3){
+				gunmaster.GetComponent<PhotonView>().RPC("weapon", PhotonTargets.All, 3);
+			}
+		}
+	}
+
 	public void isDead(bool dead){
 		if(dead){
-			gui[2].guiText.enabled = true;
+			/*gui[2].guiText.enabled = true;
 			gui[3].guiText.text = ((int)ph.getDeathTime() + 1).ToString();
 			gui[1].guiTexture.enabled = false;
-			wasDead = true;
+			wasDead = true;*/
 		}else{
-			gui[2].guiText.enabled = false;
+			/*gui[2].guiText.enabled = false;
 			gui[3].guiText.text = "";
 			gui[1].guiTexture.enabled = true;
-			wasDead = false;
+			wasDead = false;*/
 		}
 	}
 

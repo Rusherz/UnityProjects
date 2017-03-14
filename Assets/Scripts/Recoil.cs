@@ -61,7 +61,7 @@ public class Recoil : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if (gunMaster.selected != -1 && weaponRecoil.obj != null) {
+		if (/*gunMaster.getSelected() != -1 &&*/ weaponRecoil.obj != null) {
 			if (!once) {
 				start ();
 				once = true;

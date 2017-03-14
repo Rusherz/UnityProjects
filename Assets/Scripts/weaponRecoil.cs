@@ -9,7 +9,7 @@ public class weaponRecoil : MonoBehaviour {
 
 	// Use this for initialization
 	public void setStartPoint () {
-		obj = gunMaster.loadedModel;
+		//obj = gunMaster.loadedModel;
 		startPoint = obj.transform.localPosition;
 	}
 	
