@@ -8,7 +8,7 @@ public class NetworkCharacter : Photon.MonoBehaviour {
 	Vector3 gmRealPosition = Vector3.zero;
 	Quaternion gmRealRotation = Quaternion.identity;
 
-	private gunMaster gm;
+	private static gunMaster gm;
 	public static GameObject loadedModel;
 
 	// Use this for initialization

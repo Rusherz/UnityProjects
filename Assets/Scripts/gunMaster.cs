@@ -4,7 +4,7 @@ using System.Collections;
 public class gunMaster : MonoBehaviour {
 
 	private gunClass[] guns;
-	private GameObject loadedModel;
+	private static GameObject loadedModel;
 	private static int Selected = -1;
 	private GameObject parent;
 
@@ -26,7 +26,7 @@ public class gunMaster : MonoBehaviour {
 			}
 		}
 		loadedModel = (GameObject) PhotonNetwork.Instantiate (guns[selected].getGun(), parent.transform.position, parent.transform.rotation, 0);
-		loadedModel.transform.parent = parent.transform;
+		loadedModel.transform.parent = transform.FindChild("PlayerCamera");
 		NetworkCharacter.loadedModel = loadedModel;
 		//wr.setStartPoint();
 		Selected = selected;
