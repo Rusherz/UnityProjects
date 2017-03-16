@@ -1,0 +1,13 @@
+D:\gitProjects\shooter\Temp\bin\Debug\Assembly-CSharp-firstpass.dll
+D:\gitProjects\shooter\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+D:\gitProjects\shooter\Temp\bin\Debug\Photon3Unity3D.dll
+D:\gitProjects\shooter\Temp\bin\Debug\UnityEditor.dll
+D:\gitProjects\shooter\Temp\bin\Debug\UnityEngine.dll
+D:\gitProjects\shooter\Temp\bin\Debug\Mono.Cecil.dll
+D:\gitProjects\shooter\Temp\bin\Debug\nunit.framework.dll
+D:\gitProjects\shooter\Temp\bin\Debug\Unity.DataContract.dll
+D:\gitProjects\shooter\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+D:\gitProjects\shooter\Temp\bin\Debug\Photon3Unity3D.xml
+D:\gitProjects\shooter\obj\Debug\Assembly-CSharp-firstpass-vs.csprojResolveAssemblyReference.cache
+D:\gitProjects\shooter\obj\Debug\Assembly-CSharp-firstpass.dll
+D:\gitProjects\shooter\obj\Debug\Assembly-CSharp-firstpass.pdb

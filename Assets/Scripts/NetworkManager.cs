@@ -3,9 +3,12 @@ using System.Collections;
 
 public class NetworkManager : MonoBehaviour {
 
+	public int players = 0;
+
 	// Use this for initialization
 	void Start () {
 		Connect ();
+		players++;
 	}
 
 	void Connect(){
@@ -13,7 +16,7 @@ public class NetworkManager : MonoBehaviour {
 	}
 
 	void OnGUI(){
-		GUILayout.Label (PhotonNetwork.connectionStateDetailed.ToString ());
+		GUILayout.Label (PhotonNetwork.playerList.ToStringFull());
 	}
 
 	void OnJoinedLobby(){
@@ -31,11 +34,11 @@ public class NetworkManager : MonoBehaviour {
 
 	void SpawnPlayer(){
 		GameObject Player = (GameObject)PhotonNetwork.Instantiate ("Player", new Vector3(0, 1.05f, 0), Quaternion.identity, 0);
-		Player.GetComponentInChildren<playerMovement> ().enabled = true;
-		Player.GetComponentInChildren<shoot> ().enabled = true;
-		Player.GetComponentInChildren<gunMaster> ().enabled = true;
+		Player.GetComponent<PhotonView> ().RPC ("setPlayerName", PhotonTargets.All, "Player " + PhotonNetwork.countOfPlayers);
+		players++;
+        Player.transform.FindChild("RecoilHolder").transform.FindChild("PlayerCamera").gameObject.SetActive(true);
+        Player.GetComponentInChildren<PlayerController> ().enabled = true;
 		Player.GetComponentInChildren<MeshRenderer> ().enabled = false;
-		Player.transform.Find ("PlayerCamera").gameObject.SetActive (true);
 	}
 
 }

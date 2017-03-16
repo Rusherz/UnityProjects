@@ -5,17 +5,17 @@ public class gunClass {
 
 	private string Gun;
 	private float Rpm;
-	private float MagSize;
-	private float Mags;
+	private int MagSize;
+	private int TotalBullets;
 	private float Damage;
 	private float Range;
 	private float Kick;
 
-	public gunClass(string gun, float rpm, float magSize, float mags, float damage, float range, float kick){
+	public gunClass(string gun, float rpm, int magSize, float damage, float range, float kick){
 		this.Gun = gun;
 		this.Rpm = rpm;
 		this.MagSize = magSize;
-		this.Mags = mags;
+		this.TotalBullets = magSize * 6;
 		this.Damage = damage;
 		this.Range = range;
 		this.Kick = kick;
@@ -37,20 +37,21 @@ public class gunClass {
 		return Rpm;
 	}
 
-	public void setMagSize(float magSize){
+	public void setMagSize(int magSize){
 		this.MagSize = magSize;
 	}
 	
-	public float getMagSize(){
+	public int getMagSize(){
 		return MagSize;
 	}
 
-	public void setMags(float mags){
-		this.Mags = mags;
+	public void setTotalBullets(int totalBullets)
+    {
+		this.TotalBullets = totalBullets;
 	}
 	
-	public float getMags(){
-		return Mags;
+	public int getTotalBullets(){
+		return TotalBullets;
 	}
 
 	public void setDamage(float damage){
