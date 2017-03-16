@@ -13,7 +13,10 @@ public class PlayerController : MonoBehaviour
     private GameObject weaponHolder;
     private NetworkCharacter netChar;
     private Recoil recoil;
+    private GUI Ammo;
     private GUIStyle ammoStyle;
+    private GUI Health;
+    private GUIStyle healthStyle;
     private bool paused = false;
 
     // Use this for initialization
@@ -29,6 +32,9 @@ public class PlayerController : MonoBehaviour
         netChar = GetComponent<NetworkCharacter>();
         recoil = GetComponentInChildren<Recoil>();
 
+        
+            GUI.Label(new Rect(Screen.width - 100, Screen.height - 50, 100, 50), bulletCount + "/" + currentGun.getTotalBullets(), ammoStyle);
+
         ammoStyle = new GUIStyle();
         ammoStyle.fontStyle = FontStyle.Bold;
         ammoStyle.fontSize = 28;
@@ -41,8 +47,9 @@ public class PlayerController : MonoBehaviour
     {
         if (currentGun != null && !paused)
         {
-            GUI.Label(new Rect(Screen.width - 100, Screen.height - 50, 100, 50), bulletCount + "/" + currentGun.getTotalBullets(), ammoStyle);
+           
         }
+        
     }
 
     // Update is called once per frame
