@@ -1,44 +1,82 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
-public class NetworkManager : MonoBehaviour {
+public class NetworkManager : MonoBehaviour
+{
+    public Text username;
+    public float RespawnTimer = 0f;
+    public GameObject RespawnCamera;
 
-	public int players = 0;
+    private Button multiplayer;
 
-	// Use this for initialization
-	void Start () {
-		Connect ();
-		players++;
-	}
+    // Use this for initialization
+    void Start()
+    {
+        PhotonNetwork.player.NickName = PlayerPrefs.GetString("Username", "");
+    }
 
-	void Connect(){
-		PhotonNetwork.ConnectUsingSettings ("v0.0.0");
-	}
+    void Connect()
+    {
+        PhotonNetwork.ConnectUsingSettings("v0.0.0");
+    }
 
-	void OnGUI(){
-		GUILayout.Label (PhotonNetwork.playerList.ToStringFull());
-	}
+    void OnDestroy()
+    {
+        PlayerPrefs.SetString("Username", PhotonNetwork.player.NickName);
+    }
 
-	void OnJoinedLobby(){
-		PhotonNetwork.JoinRandomRoom ();
-	}
+    public void OnButtonClick()
+    {
+        PhotonNetwork.player.NickName = username.text;
+        Connect();
+    }
 
-	void OnPhotonRandomJoinFailed(){
-		PhotonNetwork.CreateRoom (null);
-	}
+    void OnJoinedLobby()
+    {
+        PhotonNetwork.JoinRandomRoom();
+    }
 
-	void OnJoinedRoom(){
-		Debug.Log ("Joined room");
-		SpawnPlayer ();
-	}
+    void OnPhotonRandomJoinFailed()
+    {
+        PhotonNetwork.CreateRoom(null);
+    }
 
-	void SpawnPlayer(){
-		GameObject Player = (GameObject)PhotonNetwork.Instantiate ("Player", new Vector3(0, 1.05f, 0), Quaternion.identity, 0);
-		Player.GetComponent<PhotonView> ().RPC ("setPlayerName", PhotonTargets.All, "Player " + PhotonNetwork.countOfPlayers);
-		players++;
+    void OnJoinedRoom()
+    {
+        Debug.Log("Joined room");
+        SpawnPlayer();
+    }
+
+    void SpawnPlayer()
+    {
+        GameObject ui = GameObject.Find("UI");
+        if(ui != null)
+        {
+            ui.SetActive(false);
+        }
+        GameObject Player = (GameObject)PhotonNetwork.Instantiate("Player", new Vector3(0, 1.05f, 0), Quaternion.identity, 0);
+        Player.GetComponent<PhotonView>().RPC("setPlayerName", PhotonTargets.AllBuffered, PhotonNetwork.player.NickName);
         Player.transform.FindChild("RecoilHolder").transform.FindChild("PlayerCamera").gameObject.SetActive(true);
-        Player.GetComponentInChildren<PlayerController> ().enabled = true;
-		Player.GetComponentInChildren<MeshRenderer> ().enabled = false;
-	}
+        Player.GetComponentInChildren<PlayerController>().enabled = true;
+        Player.GetComponentInChildren<MeshRenderer>().enabled = false;
+    }
+
+    void Update()
+    {
+        if(RespawnTimer > 0)
+        {
+            Debug.Log("UPDATING");
+            RespawnTimer -= Time.deltaTime;
+
+            GameObject.Find("RespawnTimer").GetComponent<Text>().text = ((int)RespawnTimer).ToString();
+
+            if(RespawnTimer <= 0)
+            {
+                RespawnCamera.SetActive(false);
+                SpawnPlayer();
+            }
+        }
+    }
 
 }

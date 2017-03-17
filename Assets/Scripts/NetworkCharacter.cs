@@ -6,6 +6,8 @@ public class NetworkCharacter : Photon.MonoBehaviour {
 	Vector3 realPosition = Vector3.zero;
 	Quaternion realRotation = Quaternion.identity;
 
+    bool gotFirstUpdate = false;
+
 	public GameObject loadedModel;
 
 	// Use this for initialization
@@ -18,20 +20,31 @@ public class NetworkCharacter : Photon.MonoBehaviour {
 		if(photonView.isMine){
 
 		}else{
-			transform.position = Vector3.Lerp(transform.position, realPosition, 0.01f);
-			transform.rotation = Quaternion.Lerp(transform.rotation, realRotation, 0.01f);
+			transform.position = Vector3.Lerp(transform.position, realPosition, 0.05f);
+			transform.rotation = Quaternion.Lerp(transform.rotation, realRotation, 0.05f);
 		}
 	}
 
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info){
-		Debug.Log(transform.name + "   " + loadedModel);
 		if(stream.isWriting){
 			stream.SendNext(transform.position);
 			stream.SendNext(transform.rotation);
 		}else{
 			realPosition = (Vector3)stream.ReceiveNext();
 			realRotation = (Quaternion)stream.ReceiveNext();
+
+            if (!gotFirstUpdate)
+            {
+                transform.position = realPosition;
+                transform.rotation = realRotation;
+                gotFirstUpdate = true;
+            }
 		}
 	}
+
+    public void setParent(string Name, int id)
+    {
+        GetComponent<PhotonView>().RPC("setWeaponParent", PhotonTargets.AllBuffered, Name, id);
+    }
 
 }

@@ -14,7 +14,7 @@ public class shoot : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		Screen.lockCursor = true; 
+		//Screen.lockCursor = true; 
 		//gm = GetComponent<gunMaster> ();
 		cam = GetComponentInChildren<Camera> ();
 	}
