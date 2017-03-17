@@ -111,9 +111,11 @@
      <Compile Include="Assets\Photon Unity Networking\UtilityScripts\SupportLogger.cs" />
      <Compile Include="Assets\Photon Unity Networking\UtilityScripts\TimeKeeper.cs" />
      <Compile Include="Assets\Scripts\AmmoDisplay.cs" />
+     <Compile Include="Assets\Scripts\MapGen.cs" />
      <Compile Include="Assets\Scripts\NetworkCharacter.cs" />
      <Compile Include="Assets\Scripts\NetworkManager.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\PlayerController1.cs" />
      <Compile Include="Assets\Scripts\PlayerHealth.cs" />
      <Compile Include="Assets\Scripts\Recoil.cs" />
      <Compile Include="Assets\Scripts\gunClass.cs" />

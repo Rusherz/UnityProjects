@@ -55,7 +55,7 @@ public class NetworkManager : MonoBehaviour
         {
             ui.SetActive(false);
         }
-        GameObject Player = (GameObject)PhotonNetwork.Instantiate("Player", new Vector3(0, 1.05f, 0), Quaternion.identity, 0);
+        GameObject Player = (GameObject)PhotonNetwork.Instantiate("Player", MapGen.playerSpawnPoint, Quaternion.identity, 0);
         Player.GetComponent<PhotonView>().RPC("setPlayerName", PhotonTargets.AllBuffered, PhotonNetwork.player.NickName);
         Player.transform.FindChild("RecoilHolder").transform.FindChild("PlayerCamera").gameObject.SetActive(true);
         Player.GetComponentInChildren<PlayerController>().enabled = true;
