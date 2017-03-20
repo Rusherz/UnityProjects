@@ -233,7 +233,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2126345566}
-        m_MethodName: OnBuildFloorClick
+        m_MethodName: OnBulldozeFloorClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -898,6 +898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b617db19ca3bcc4488afc47f0bdfbce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BuildModeTile: 1
   cursorCirclePrefab: {fileID: 1822464159900594, guid: cc77507a5cf8dc74598d4b189d37d06c,
     type: 2}
 --- !u!4 &2126345567
