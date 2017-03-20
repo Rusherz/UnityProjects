@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Controllers\MouseController.cs" />
      <Compile Include="Assets\Controllers\WorldController.cs" />
+     <Compile Include="Assets\Images\UI\scripts\MenuLayout.cs" />
      <Compile Include="Assets\Models\InstalledObject.cs" />
      <Compile Include="Assets\Models\LooseObject.cs" />
      <Compile Include="Assets\Models\Tile.cs" />

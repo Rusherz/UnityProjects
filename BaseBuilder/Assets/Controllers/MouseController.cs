@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MouseController : MonoBehaviour {
+
+	public Tile.TileType BuildModeTile = Tile.TileType.Floor;
 
 	public GameObject cursorCirclePrefab;
 	Vector3 currFramePos;
@@ -29,8 +32,6 @@ public class MouseController : MonoBehaviour {
 
 	}
 
-
-
 	/*void UpdateCursorPos(){
 		// Update mouse circle position
 		Tile tileUnderMouse = WorldController.Instance.GetTileAtWorldCoord(currFramePos);
@@ -44,6 +45,11 @@ public class MouseController : MonoBehaviour {
 	}*/
 
 	void DragSelect(){
+		// If over UI bail
+		if(EventSystem.current.IsPointerOverGameObject()){
+			return;
+		}
+
 		// Start Drag
 		if (Input.GetMouseButtonDown (0)) {
 			tileDragStartPos = currFramePos;
@@ -92,7 +98,7 @@ public class MouseController : MonoBehaviour {
 				for (int y = start_y; y <= end_y; y++) {
 					Tile t = WorldController.Instance.world.getTileAt (x, y);
 					if (t != null) {
-						t.Type = Tile.TileType.Floor;
+						t.Type = BuildModeTile;
 					}
 				}
 			}
@@ -109,4 +115,13 @@ public class MouseController : MonoBehaviour {
 		Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis ("Mouse ScrollWheel");
 		Camera.main.orthographicSize = Mathf.Clamp (Camera.main.orthographicSize, 3, 25);
 	}
+
+	public void OnBuildFloorClick(){
+		BuildModeTile = Tile.TileType.Floor;
+	}
+
+	public void OnBulldozeFloorClick(){
+		BuildModeTile = Tile.TileType.Empty;
+	}
+
 }
