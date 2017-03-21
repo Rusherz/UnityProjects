@@ -24,7 +24,7 @@ public class Tile {
 	}
 
 	LooseObject loseObject;
-	InstalledObject installedObject;
+	public InstalledObject installedObject { get; protected set; }
 
 	World world;
 
@@ -51,7 +51,28 @@ public class Tile {
 	}
 
 	public void RegTileTypeChanged (Action<Tile> callback){
-		TileTypeChanged = callback;
+		TileTypeChanged += callback;
+	}
+
+	public void UnregTileTypeChanged (Action<Tile> callback){
+		TileTypeChanged -= callback;
+	}
+
+	public bool InstallTileObject(InstalledObject ObjectInstance){
+
+		if (ObjectInstance == null) {
+			installedObject = null;
+			return true;
+		}
+
+		if (installedObject != null) {
+			//Debug.LogError ("Tile already has an object");
+			return false;
+		} else {
+			installedObject = ObjectInstance;
+			return true;
+		}
+
 	}
 
 }

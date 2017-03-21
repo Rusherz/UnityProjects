@@ -1,10 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class World  {
 
 	Tile[,] tiles;
+
+	Dictionary<string, InstalledObject> InstalledObjectProto;
+
+	Action<InstalledObject> InstalledObjectCreated;
 
 	int width;
 	public int Width {
@@ -32,13 +37,21 @@ public class World  {
 		}
 
 		Debug.Log ("World Generated with  " + (width * height) + " tiles.");
+
+		CreateInstalledObjectProtos ();
+	}
+
+	void CreateInstalledObjectProtos(){
+		InstalledObjectProto = new Dictionary<string, InstalledObject> ();
+		InstalledObjectProto.Add ("Wall", InstalledObject.CreateProto ("Wall", 0, 1, 1, true));
+
 	}
 
 	public void RandomTiles(){
 		Debug.Log ("Randomizing tiles");
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				if (Random.Range (0, 2) == 0) {
+				if (UnityEngine.Random.Range (0, 2) == 0) {
 					tiles [x, y].Type = Tile.TileType.Empty;
 				}else{
 					tiles [x, y].Type = Tile.TileType.Floor;
@@ -53,6 +66,31 @@ public class World  {
 		}
 
 		return tiles [x, y];
+	}
+
+	public void PlaceInstalledObject(string ObjectType, Tile t){
+
+		if (!InstalledObjectProto.ContainsKey (ObjectType)) {
+			Debug.LogError ("Not an installed object proto");
+			return;
+		}
+
+		InstalledObject obj = InstalledObject.PlaceObject (InstalledObjectProto [ObjectType], t);
+
+		if (obj == null) {
+			return;
+		}
+		if (InstalledObjectCreated != null) {
+			InstalledObjectCreated (obj);
+		}
+	}
+
+	public void RegisterInstalledObjectCreated(Action<InstalledObject> callFunc){
+		InstalledObjectCreated += callFunc;
+	}
+
+	public void UnregisterInstalledObjectCreated(Action<InstalledObject> callFunc){
+		InstalledObjectCreated -= callFunc;
 	}
 
 }

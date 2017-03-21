@@ -48,11 +48,11 @@
   <ItemGroup>
      <Compile Include="Assets\Controllers\MouseController.cs" />
      <Compile Include="Assets\Controllers\WorldController.cs" />
-     <Compile Include="Assets\Images\UI\scripts\MenuLayout.cs" />
      <Compile Include="Assets\Models\InstalledObject.cs" />
      <Compile Include="Assets\Models\LooseObject.cs" />
      <Compile Include="Assets\Models\Tile.cs" />
      <Compile Include="Assets\Models\World.cs" />
+     <Compile Include="Assets\Resources\Images\UI\scripts\MenuLayout.cs" />
      <Compile Include="Assets\Utilies\SimplePool.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

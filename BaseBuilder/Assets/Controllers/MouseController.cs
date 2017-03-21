@@ -13,6 +13,9 @@ public class MouseController : MonoBehaviour {
 	Vector3 tileDragStartPos;
 	List<GameObject> DragPreview;
 
+	bool BuildModeObject = false;
+	string BuildModeObjectType;
+
 	// Use this for initialization
 	void Start () {
 		DragPreview = new List<GameObject> ();
@@ -98,7 +101,13 @@ public class MouseController : MonoBehaviour {
 				for (int y = start_y; y <= end_y; y++) {
 					Tile t = WorldController.Instance.world.getTileAt (x, y);
 					if (t != null) {
-						t.Type = BuildModeTile;
+
+						if (BuildModeObject) {
+							WorldController.Instance.world.PlaceInstalledObject (BuildModeObjectType, t);
+						} else {
+							t.Type = BuildModeTile;
+						}
+
 					}
 				}
 			}
@@ -116,11 +125,18 @@ public class MouseController : MonoBehaviour {
 		Camera.main.orthographicSize = Mathf.Clamp (Camera.main.orthographicSize, 3, 25);
 	}
 
+	public void OnBuildWallClick(string ObjectType){
+		BuildModeObject = true;
+		BuildModeObjectType = ObjectType;
+	}
+
 	public void OnBuildFloorClick(){
+		BuildModeObject = false;
 		BuildModeTile = Tile.TileType.Floor;
 	}
 
 	public void OnBulldozeFloorClick(){
+		BuildModeObject = false;
 		BuildModeTile = Tile.TileType.Empty;
 	}
 
