@@ -14,7 +14,7 @@ public class WorldController : MonoBehaviour {
 	public World world { get; protected set; }
 
 	Dictionary<Tile, GameObject> TileGameObjectMap;
-	Dictionary<InstalledObject, GameObject> InstalledGameObjectMap;
+	Dictionary<Furniture, GameObject> InstalledGameObjectMap;
 	Dictionary<string, Sprite> InstalledObjectSprites;
 
 	// Use this for initialization
@@ -35,7 +35,7 @@ public class WorldController : MonoBehaviour {
 		world.RegisterInstalledObjectCreated (OnInstalledObjectCreated);
 
 		TileGameObjectMap = new Dictionary<Tile, GameObject> ();
-		InstalledGameObjectMap = new Dictionary<InstalledObject, GameObject> ();
+		InstalledGameObjectMap = new Dictionary<Furniture, GameObject> ();
 
 		// Create a GameObject for each tile for them to show
 		for (int x = 0; x < world.Width; x++) {
@@ -55,7 +55,7 @@ public class WorldController : MonoBehaviour {
 			}
 		}
 
-		world.RandomTiles ();
+		//world.RandomTiles ();
 
 	}
 	
@@ -99,21 +99,21 @@ public class WorldController : MonoBehaviour {
 		}
 	}
 
-	public void OnInstalledObjectCreated(InstalledObject obj){
-		GameObject obj_go = new GameObject ();
+	public void OnInstalledObjectCreated(Furniture furn){
+		GameObject furn_go = new GameObject ();
 
-		InstalledGameObjectMap.Add (obj, obj_go);
+		InstalledGameObjectMap.Add (furn, furn_go);
 
-		obj_go.name = obj.objectType + "_" + obj.tile.X + "_" + obj.tile.Y;
-		obj_go.transform.position = new Vector3 (obj.tile.X , obj.tile.Y, 0);
-		obj_go.transform.SetParent (this.transform, true);
+		furn_go.name = furn.objectType + "_" + furn.tile.X + "_" + furn.tile.Y;
+		furn_go.transform.position = new Vector3 (furn.tile.X , furn.tile.Y, 0);
+		furn_go.transform.SetParent (this.transform, true);
 
-		obj_go.AddComponent<SpriteRenderer> ().sprite = GetSpriteForInstalledObject(obj);
-		obj_go.GetComponent<SpriteRenderer> ().sortingLayerName = "InstalledObject";
-		obj.RegisterOnInstalledObjectChanged (OnInstalledObjectChanged);
+		furn_go.AddComponent<SpriteRenderer> ().sprite = GetSpriteForInstalledObject(furn);
+		furn_go.GetComponent<SpriteRenderer> ().sortingLayerName = "InstalledObject";
+		furn.RegisterOnInstalledObjectChanged (OnInstalledObjectChanged);
 	}
 
-	Sprite GetSpriteForInstalledObject(InstalledObject obj){
+	Sprite GetSpriteForInstalledObject(Furniture obj){
 		if (!obj.linksToNeighbour) {
 			return InstalledObjectSprites [obj.objectType];
 		}
@@ -140,11 +140,17 @@ public class WorldController : MonoBehaviour {
 			SpriteName += "W";
 		}
 
-        Debug.Log(SpriteName);
 		return InstalledObjectSprites [SpriteName];
 	}
 
-	void OnInstalledObjectChanged(InstalledObject obj){
+	void OnInstalledObjectChanged(Furniture furn){
+
+		if (!InstalledGameObjectMap.ContainsKey (furn)) {
+			return;
+		}
+
+		GameObject furn_go = InstalledGameObjectMap [furn];
+		furn_go.GetComponent<SpriteRenderer> ().sprite = GetSpriteForInstalledObject(furn);
 
 	}
 

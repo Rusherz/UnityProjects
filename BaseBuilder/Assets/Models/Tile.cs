@@ -23,10 +23,10 @@ public class Tile {
 		}
 	}
 
-	LooseObject loseObject;
-	public InstalledObject installedObject { get; protected set; }
+	Inventory inventory;
+	public Furniture installedObject { get; protected set; }
 
-	World world;
+	public World world{ get; protected set; }
 
 	int x;
 
@@ -58,7 +58,7 @@ public class Tile {
 		TileTypeChanged -= callback;
 	}
 
-	public bool InstallTileObject(InstalledObject ObjectInstance){
+	public bool InstallTileObject(Furniture ObjectInstance){
 
 		if (ObjectInstance == null) {
 			installedObject = null;

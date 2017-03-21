@@ -7,9 +7,9 @@ public class World  {
 
 	Tile[,] tiles;
 
-	Dictionary<string, InstalledObject> InstalledObjectProto;
+	Dictionary<string, Furniture> InstalledObjectProto;
 
-	Action<InstalledObject> InstalledObjectCreated;
+	Action<Furniture> InstalledObjectCreated;
 
 	int width;
 	public int Width {
@@ -42,8 +42,8 @@ public class World  {
 	}
 
 	void CreateInstalledObjectProtos(){
-		InstalledObjectProto = new Dictionary<string, InstalledObject> ();
-		InstalledObjectProto.Add ("Wall", InstalledObject.CreateProto ("Wall", 0, 1, 1, true));
+		InstalledObjectProto = new Dictionary<string, Furniture> ();
+		InstalledObjectProto.Add ("Wall", Furniture.CreateProto ("Wall", 0, 1, 1, true));
 
 	}
 
@@ -75,7 +75,7 @@ public class World  {
 			return;
 		}
 
-		InstalledObject obj = InstalledObject.PlaceObject (InstalledObjectProto [ObjectType], t);
+		Furniture obj = Furniture.PlaceObject (InstalledObjectProto [ObjectType], t);
 
 		if (obj == null) {
 			return;
@@ -85,11 +85,11 @@ public class World  {
 		}
 	}
 
-	public void RegisterInstalledObjectCreated(Action<InstalledObject> callFunc){
+	public void RegisterInstalledObjectCreated(Action<Furniture> callFunc){
 		InstalledObjectCreated += callFunc;
 	}
 
-	public void UnregisterInstalledObjectCreated(Action<InstalledObject> callFunc){
+	public void UnregisterInstalledObjectCreated(Action<Furniture> callFunc){
 		InstalledObjectCreated -= callFunc;
 	}
 
