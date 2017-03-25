@@ -44,6 +44,15 @@ TagManager:
   - name: InstalledObject
     uniqueID: 1553904305
     locked: 0
+  - name: Inventory
+    uniqueID: 1849289195
+    locked: 0
+  - name: InventoryUI
+    uniqueID: 2893268273
+    locked: 0
+  - name: Character
+    uniqueID: 1528464687
+    locked: 0
   - name: TileUI
     uniqueID: 439505617
     locked: 0
