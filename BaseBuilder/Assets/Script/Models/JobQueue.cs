@@ -36,7 +36,8 @@ public class JobQueue {
 	public void Remove(Job j){
 		List<Job> jobs = new List<Job> (jobQueue);
 		if (jobs.Contains (j) == false) {
-			Debug.LogError ("Trying to remove a job that isnt in the queue.");
+			//Debug.LogError ("Trying to remove a job that isnt in the queue.");
+
 			return;
 		}
 		jobs.Remove (j);

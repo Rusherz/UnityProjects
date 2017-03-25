@@ -18,6 +18,8 @@ public class Job {
 	Action<Job> cbJobWorked;
 	public Dictionary<string, Inventory> InventoryReq;
 
+	public bool canTakeFromStockPile = true;
+
 	public Job(Tile tile, string jobObjectType, Action<Job> cbJobComplete, float jobTime, Inventory[] InventoryReq){
 		this.tile = tile;
 		this.jobObjectType = jobObjectType;
@@ -82,6 +84,14 @@ public class Job {
 	}
 
 	public void DoWork(float workTime){
+		if (!HasMaterial()) {
+			Debug.LogError ("Tried to do job that doesnt have all the material");
+			if (cbJobWorked != null) {
+				cbJobWorked (this);
+			}
+			return;
+		}
+
 		jobTime -= workTime;
 
 		if (cbJobWorked != null) {

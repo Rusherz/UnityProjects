@@ -115,6 +115,7 @@ public class World : IXmlSerializable{
 		furniturePrototypes.Add("Stock Pile", new Furniture("Stock Pile", 1, 1, 1, false, false));
 		furnitureJobPrototypes.Add("Stock Pile", new Job(null, "Stock Pile", FurnitureActions.JobComplete_Building,-1f, null));
 		furniturePrototypes ["Stock Pile"].RegisterAction (FurnitureActions.StockPile_UpdateAction);
+		furniturePrototypes ["Stock Pile"].tint = new Color32(186, 31, 31, 255);
 
 		furniturePrototypes.Add("Door", new Furniture("Door", 2, 1, 1, false, true));
 		furniturePrototypes["Door"].SetParam("openess", 0);
@@ -223,6 +224,12 @@ public class World : IXmlSerializable{
 
 	public bool IsFurniturePLacementValid(string furnType, Tile t){
 		return furniturePrototypes [furnType].IsValidPlacement (t);
+	}
+
+	public void OnInventoryCreated(Inventory inv){
+		if (cbInventoryCreated != null) {
+			cbInventoryCreated (inv);
+		}
 	}
 
 	/*

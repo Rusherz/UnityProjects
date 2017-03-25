@@ -35,41 +35,49 @@ public static class FurnitureActions {
 		theJob.tile.JobPending = null;
 	}
 
+	public static Inventory[] GetItemsFromFilter(){
+		return new Inventory[1] { new Inventory ("Steel Plate", 50, 0) };
+	}
+
 	public static void StockPile_UpdateAction(Furniture furn, float deltaTime){
+
+		if(furn.tile.inventory != null && 
+			furn.tile.inventory.stackSize >= furn.tile.inventory.maxStackSize){
+			furn.ClearJobs ();
+			return;
+		}
+
+		if (furn.JobCount() > 0) {
+			return;
+		}
+
+		if (furn.tile.inventory != null && furn.tile.inventory.stackSize == 0) {
+			Debug.LogError ("This stack has an inventory of 0 wtf ERROR");
+			furn.ClearJobs ();
+			return;
+		}
+
+		Inventory[] itemsDesired;
+
 		if (furn.tile.inventory == null) {
-
-			if (furn.JobCount () > 0) {
-				return;
-			}
-
-			Job j = new Job (
-				        furn.tile,
-				        null,
-				        null,
-				        0,
-				        new Inventory[1] { new Inventory ("Steel Plate", 50, 0) });
-			j.RegisterJobWorkedCallBack (StockPile_JobWorked);
-			furn.AddJob (j);
-		} else if(furn.tile.inventory.stackSize < furn.tile.inventory.maxStackSize) {
-			if (furn.JobCount () > 0) {
-				return;
-			}
-
+			itemsDesired = GetItemsFromFilter ();
+		}else{
 			Inventory desInv = furn.tile.inventory.Clone ();
 			desInv.maxStackSize -= desInv.stackSize;
 			desInv.stackSize = 0;
 
-			Job j = new Job (
-				furn.tile,
-				null,
-				null,
-				0,
-				new Inventory[1] { desInv });
-
-			j.RegisterJobWorkedCallBack (StockPile_JobWorked);
-			furn.AddJob (j);
+			itemsDesired = new Inventory[] { desInv };
 		}
 
+		Job j = new Job (
+			furn.tile,
+			null,
+			null,
+			0,
+			itemsDesired);
+		j.canTakeFromStockPile = false;
+		j.RegisterJobWorkedCallBack (StockPile_JobWorked);
+		furn.AddJob (j);
 	}
 
 	static void StockPile_JobWorked(Job j){

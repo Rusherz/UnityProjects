@@ -42,6 +42,7 @@ public class InventoryManager {
 				inventory [tile.inventory.objectType] = new List<Inventory> ();
 			}
 			inventory [tile.inventory.objectType].Add (tile.inventory);
+			tile.world.OnInventoryCreated (tile.inventory);
 		}
 		return true;
 	}
@@ -95,13 +96,13 @@ public class InventoryManager {
 		return true;
 	}
 
-	public Inventory GetClosestInventoryOfType(string type, Tile t, int amount){
+	public Inventory GetClosestInventoryOfType(string type, Tile t, int amount, bool canTakeFromStockPile){
 		if (!inventory.ContainsKey (type)) {
 			Debug.LogError ("Trying to add inventory to a job that it doesnt want.");
 			return null;
 		}
 		foreach (Inventory inv in inventory[type]) {
-			if (inv.tile != null) {
+			if (inv.tile != null && (canTakeFromStockPile || inv.tile.furniture == null || inv.tile.furniture.IsStockPile() == false)) {
 				return inv;
 			}
 		}

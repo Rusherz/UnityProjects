@@ -58,6 +58,8 @@ public class Furniture : IXmlSerializable{
 
 	public bool roomEnclosure{ get; protected set; }
 
+	public Color32 tint = Color.white;
+
 	int width;
 	int height;
 
@@ -82,6 +84,7 @@ public class Furniture : IXmlSerializable{
 		this.roomEnclosure = other.roomEnclosure;
         this.width = other.width;
         this.height = other.height;
+		this.tint = other.tint;
         this.linksToNeighbour = other.linksToNeighbour;
 
 		this.furnParam = new Dictionary<string, float>(other.furnParam);
@@ -201,6 +204,10 @@ public class Furniture : IXmlSerializable{
 		foreach (Job j in jobs) {
 			RemoveJob (j);
 		}
+	}
+
+	public bool IsStockPile(){
+		return objectType == "Stock Pile";
 	}
 
 	/*

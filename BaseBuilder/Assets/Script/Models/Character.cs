@@ -107,14 +107,16 @@ public class Character : IXmlSerializable {
 				}
 			} else {
 
-				if (currTile.inventory != null && myJob.NeededMaterial (currTile.inventory) > 0) {
+				if (currTile.inventory != null 
+					&& (currTile.furniture == null || !currTile.furniture.IsStockPile() || myJob.canTakeFromStockPile)
+					&& myJob.NeededMaterial (currTile.inventory) > 0) {
 					currTile.world.inventoryManager.PlaceInventory (this, currTile.inventory, myJob.NeededMaterial (currTile.inventory));
 				} else {
 
 					Inventory reqNotMet = myJob.GetFirstNeededMaterial ();
 
 					Inventory supply = currTile.world.inventoryManager.GetClosestInventoryOfType (reqNotMet.objectType, currTile, 
-						                  reqNotMet.maxStackSize - reqNotMet.stackSize);
+						reqNotMet.maxStackSize - reqNotMet.stackSize, myJob.canTakeFromStockPile);
 					if (supply == null) {
 						Debug.Log ("No tile contains objects of type " + reqNotMet.objectType);
 						AbandonJob ();
@@ -222,6 +224,10 @@ public class Character : IXmlSerializable {
 
 	void OnJobEnded(Job j) {
 		// Job completed or was cancelled.
+
+		j.UnregisterJobCancelCallBack (OnJobEnded);
+		j.UnregisterJobCompleteCallBack (OnJobEnded);
+
 
 		if(j != myJob) {
 			Debug.LogError("Character being told about job that isn't his. You forgot to unregister something.");
