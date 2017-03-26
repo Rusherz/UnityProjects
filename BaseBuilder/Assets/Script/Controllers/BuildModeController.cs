@@ -2,35 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
+public enum BuildMode{
+	Floor,
+	Furniture,
+	Deconstruct
+}
+
 public class BuildModeController : MonoBehaviour {
 
-	bool buildModeIsObjects = false;
+	public BuildMode buildMode = BuildMode.Floor;
 	TileType buildModeTile = TileType.Floor;
-	string buildModeObjectType;
+	public string buildModeObjectType;
 	GameObject furniturePreview;
-	FurnitureSpriteController fsc;
-	MouseController mc;
 
 	// Use this for initialization
 	void Start () {
-		mc = GameObject.FindObjectOfType<MouseController> ();
-		fsc = GameObject.FindObjectOfType<FurnitureSpriteController> ();
-		furniturePreview = new GameObject ();
-		furniturePreview.transform.SetParent (this.transform);
-		furniturePreview.AddComponent<SpriteRenderer> ().sortingLayerName = "InstalledObject";;
-		furniturePreview.SetActive(false);
-	}
 
-	void Update(){
-		if (buildModeIsObjects && buildModeObjectType != null && buildModeObjectType != "") {
-			ShowFurnitureSpriteAtCord (buildModeObjectType, mc.GetMouseOverTile ());
-		} else {
-			furniturePreview.SetActive (false);
-		}
 	}
 
 	public bool IsObjectDraggable(){
-		if (!buildModeIsObjects) {
+		if (buildMode == BuildMode.Floor || buildMode == BuildMode.Deconstruct) {
 			return true;
 		}
 
@@ -40,41 +31,37 @@ public class BuildModeController : MonoBehaviour {
 
 	}
 
-	void ShowFurnitureSpriteAtCord(string furnitureType, Tile t){
-		furniturePreview.SetActive (true);
-		SpriteRenderer sr = furniturePreview.GetComponent<SpriteRenderer>();
-		sr.sprite = fsc.GetSpriteForFurniture (furnitureType);
-		if (WorldController.Instance.world.IsFurniturePLacementValid (furnitureType, t)) {
-			sr.color = new Color (0.5f, 1f, 0.5f, 0.25f);
-		} else {
-			sr.color = new Color (1f, 0.5f, 0.5f, 0.25f);
-		}
-		Furniture proto = t.world.furniturePrototypes [furnitureType];
-		furniturePreview.transform.position = new Vector3 (t.X  + ((proto.height - 1) / 2f), t.Y  + ((proto.height - 1) / 2f), 0);
-	}
+
 
 	public void SetMode_BuildFloor( ) {
-		buildModeIsObjects = false;
+		buildMode = BuildMode.Floor;
 		buildModeTile = TileType.Floor;
+		GameObject.FindObjectOfType<MouseController> ().StartBuildMode ();
 	}
 	
 	public void SetMode_Bulldoze( ) {
-		buildModeIsObjects = false;
+		buildMode = BuildMode.Floor;
 		buildModeTile = TileType.Empty;
+		GameObject.FindObjectOfType<MouseController> ().StartBuildMode ();
+	}
+	public void SetMode_Deconstruct() {
+		buildMode = BuildMode.Deconstruct;
+		GameObject.FindObjectOfType<MouseController> ().StartBuildMode ();
 	}
 
 	public void SetMode_BuildFurniture( string objectType ) {
-		buildModeIsObjects = true;
+		buildMode = BuildMode.Furniture;
 		buildModeObjectType = objectType;
+		GameObject.FindObjectOfType<MouseController> ().StartBuildMode ();
 	}
 
 	public void DoBuild(Tile t){
-		if(buildModeIsObjects == true) {
+		if (buildMode == BuildMode.Furniture) {
 			string furnType = buildModeObjectType;
 			if (WorldController.Instance.world.IsFurniturePLacementValid (furnType, t) && t.JobPending == null) {
 				Job j;
 				if (WorldController.Instance.world.furnitureJobPrototypes.ContainsKey (furnType)) {
-					j = WorldController.Instance.world.furnitureJobPrototypes [furnType].Clone();
+					j = WorldController.Instance.world.furnitureJobPrototypes [furnType].Clone ();
 					j.tile = t;
 				} else {
 					Debug.LogError ("There is no furniture job prototype for " + furnType);
@@ -91,8 +78,14 @@ public class BuildModeController : MonoBehaviour {
 					theJob.tile.JobPending = null;
 				});
 			}
-		}else {
+		} else if (buildMode == BuildMode.Floor) {
 			t.Type = buildModeTile;
+		} else if (buildMode == BuildMode.Deconstruct) {
+			if (t.furniture != null) {
+				t.furniture.Deconstruct ();
+			}
+		} else {
+			Debug.Log ("Unimplemented build mode");
 		}
 	}
 

@@ -91,4 +91,12 @@ public static class FurnitureActions {
 		}
 
 	}
+
+	public static void OxygenGenerator_UpdateAction(Furniture furn, float deltaTime){
+		if (furn.tile.room.GetGasAmount ("O2") < 0.2f) {
+			Debug.Log ("Adding: " + string.Format("{0:0.00}", 0.01f * deltaTime)  + " to air.");
+			furn.tile.room.ChangeGas ("O2", 0.01f * deltaTime);
+		}
+	}
+
 }

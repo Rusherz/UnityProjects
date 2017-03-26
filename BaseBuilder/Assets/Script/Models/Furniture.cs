@@ -68,6 +68,7 @@ public class Furniture : IXmlSerializable{
 	}
 
 	public Action<Furniture> cbOnChanged;
+	public Action<Furniture> cbOnRemoved;
 
 	Func<Tile, bool> funcPositionValidation;
 
@@ -165,6 +166,14 @@ public class Furniture : IXmlSerializable{
 		cbOnChanged -= callbackFunc;
 	}
 
+	public void RegisterOnRemovedCallback(Action<Furniture> callbackFunc) {
+		cbOnRemoved += callbackFunc;
+	}
+
+	public void UnregisterOnRemovedCallback(Action<Furniture> callbackFunc) {
+		cbOnRemoved -= callbackFunc;
+	}
+
 	public bool IsValidPlacement(Tile t){
 		return funcPositionValidation (t);
 	}
@@ -216,6 +225,20 @@ public class Furniture : IXmlSerializable{
 	public bool IsStockPile(){
 		return objectType == "Stock Pile";
 	}
+
+	public void Deconstruct(){
+		Debug.Log ("Deconstructing");
+
+		tile.world.furniture.Remove (this);
+		tile.UnplaceFurniture ();
+
+		if (cbOnRemoved != null) {
+			cbOnRemoved (this);
+		}
+
+	}
+
+
 
 	/*
 	 * 

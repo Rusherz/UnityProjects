@@ -67,7 +67,7 @@ public class World : IXmlSerializable{
 		tiles = new Tile[Width,Height];
 
 		rooms = new List<Room> ();
-		rooms.Add (new Room ());
+		rooms.Add (new Room (this));
 
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
@@ -124,6 +124,7 @@ public class World : IXmlSerializable{
 		furniturePrototypes ["Door"].IsEnterable = FurnitureActions.Door_IsEnterable;
 
 		furniturePrototypes.Add("Oxygen Generator", new Furniture("Oxygen Generator", 10, 2, 2, false, false));
+		furniturePrototypes ["Oxygen Generator"].RegisterAction(FurnitureActions.OxygenGenerator_UpdateAction);
 	}
 
 	public void RandomizeTiles() {
@@ -163,6 +164,8 @@ public class World : IXmlSerializable{
 			// Failed to place object -- most likely there was already something there.
 			return null;
 		}
+
+		furn.RegisterOnRemovedCallback (OnFurnitureRemoved);
 
 		furniture.Add (furn);
 
@@ -232,6 +235,10 @@ public class World : IXmlSerializable{
 		if (cbInventoryCreated != null) {
 			cbInventoryCreated (inv);
 		}
+	}
+
+	public void OnFurnitureRemoved(Furniture furn){
+		furniture.Remove (furn);
 	}
 
 	/*
@@ -305,7 +312,7 @@ public class World : IXmlSerializable{
 		}
 
 		Inventory inv = new Inventory ();
-		inv.stackSize = UnityEngine.Random.Range (1, 5);
+		inv.stackSize = UnityEngine.Random.Range (20, 20);
 		Tile t;
 		t = GetTileAt (Width / 2, Height / 2 - 5);
 		inventoryManager.PlaceInventory (t, inv);
@@ -313,14 +320,14 @@ public class World : IXmlSerializable{
 			cbInventoryCreated (t.inventory);
 		}
 		inv = new Inventory ();
-		inv.stackSize = UnityEngine.Random.Range (1, 5);
+		inv.stackSize = UnityEngine.Random.Range (20, 20);
 		t = GetTileAt (Width / 2 + 2, Height / 2);
 		inventoryManager.PlaceInventory (t, inv);
 		if (cbInventoryCreated != null) {
 			cbInventoryCreated (t.inventory);
 		}
 		inv = new Inventory ();
-		inv.stackSize = UnityEngine.Random.Range (1, 5);
+		inv.stackSize = UnityEngine.Random.Range (20, 20);
 		t = GetTileAt (Width / 2 + 5, Height / 2 + 4);
 		inventoryManager.PlaceInventory (t, inv);
 		if (cbInventoryCreated != null) {
@@ -328,6 +335,8 @@ public class World : IXmlSerializable{
 		}
 
 	}
+
+
 
 	void ReadXmlTiles(XmlReader reader){
 

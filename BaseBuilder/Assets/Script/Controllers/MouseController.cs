@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 public class MouseController : MonoBehaviour {
 
 	public GameObject circleCursorPrefab;
+	bool IsDragging = false;
 
 	BuildModeController bmc;
 
@@ -13,11 +14,20 @@ public class MouseController : MonoBehaviour {
 
 	Vector3 dragStartPosition;
 	List<GameObject> dragPreviewGameObjects;
+	FurnitureSpriteController fsc;
+
+	enum MouseMode{
+		Select,
+		Build
+	}
+
+	MouseMode CurMode = MouseMode.Select;
 
 	// Use this for initialization
 	void Start () {
 		dragPreviewGameObjects = new List<GameObject>();
 		bmc = GameObject.FindObjectOfType<BuildModeController> ();
+		fsc = GameObject.FindObjectOfType<FurnitureSpriteController> ();
 	}
 
 	public Vector3 GetMousePosition(){
@@ -33,7 +43,17 @@ public class MouseController : MonoBehaviour {
 		currFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 		currFramePosition.z = 0;
 
-		UpdateDragging();
+		if (Input.GetKeyUp (KeyCode.Escape)) {
+			if (CurMode == MouseMode.Build) {
+				CurMode = MouseMode.Select;
+			} else if (CurMode == MouseMode.Select) {
+				Debug.Log ("Brining up pause menu");
+			}
+		}
+
+
+			UpdateDragging ();
+
 		UpdateCameraMovement();
 
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
@@ -45,10 +65,25 @@ public class MouseController : MonoBehaviour {
 		if( EventSystem.current.IsPointerOverGameObject() ) {
 			return;
 		}
-
+		// Clean up old drag previews
+		while(dragPreviewGameObjects.Count > 0) {
+			GameObject go = dragPreviewGameObjects[0];
+			dragPreviewGameObjects.RemoveAt(0);
+			SimplePool.Despawn (go);
+		}
+		if (CurMode != MouseMode.Build) {
+			return;
+		}
 		// Start Drag
-		if( Input.GetMouseButtonDown(0) ) {
+		if (Input.GetMouseButtonDown (0)) {
 			dragStartPosition = currFramePosition;
+			IsDragging = true;
+		} else if (!IsDragging) {
+			dragStartPosition = currFramePosition;
+		}
+
+		if (Input.GetMouseButtonUp (1) || Input.GetKeyUp(KeyCode.Escape)) {
+			IsDragging = false;
 		}
 
 		if (!bmc.IsObjectDraggable()) {
@@ -72,29 +107,28 @@ public class MouseController : MonoBehaviour {
 			start_y = tmp;
 		}
 
-		// Clean up old drag previews
-		while(dragPreviewGameObjects.Count > 0) {
-			GameObject go = dragPreviewGameObjects[0];
-			dragPreviewGameObjects.RemoveAt(0);
-			SimplePool.Despawn (go);
-		}
-
-		if( Input.GetMouseButton(0) ) {
+		//if( IsDragging ) {
 			// Display a preview of the drag area
 			for (int x = start_x; x <= end_x; x++) {
 				for (int y = start_y; y <= end_y; y++) {
 					Tile t = WorldController.Instance.world.GetTileAt (x, y);
 					if(t != null) {
-						// Display the building hint on top of this tile position
-						GameObject go = SimplePool.Spawn( circleCursorPrefab, new Vector3(x, y, 0), Quaternion.identity );
-						go.transform.SetParent(this.transform, true);
-						dragPreviewGameObjects.Add(go);
+					if (bmc.buildMode == BuildMode.Furniture) {
+							ShowFurnitureSpriteAtCord (bmc.buildModeObjectType, t);
+						} else {
+							// Display the building hint on top of this tile position
+							GameObject go = SimplePool.Spawn( circleCursorPrefab, new Vector3(x, y, 0), Quaternion.identity );
+							go.transform.SetParent(this.transform, true);
+							dragPreviewGameObjects.Add(go);
+						}
+
 					}
 				}
 			}
-		}
+		//}
 
-		if( Input.GetMouseButtonUp(0) ) {
+		if( IsDragging && Input.GetMouseButtonUp(0) ) {
+			IsDragging = false;
 			for (int x = start_x; x <= end_x; x++) {
 				for (int y = start_y; y <= end_y; y++) {
 					Tile t = WorldController.Instance.world.GetTileAt (x, y);
@@ -118,5 +152,27 @@ public class MouseController : MonoBehaviour {
 
 		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 3f, 25f);
 	}		
-	
+
+	void ShowFurnitureSpriteAtCord(string furnitureType, Tile t){
+
+		GameObject go = new GameObject ();
+		go.transform.SetParent(this.transform, true);
+		dragPreviewGameObjects.Add(go);
+
+		SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+		sr.sprite = fsc.GetSpriteForFurniture (furnitureType);
+		sr.sortingLayerName = "InstalledObject";
+		if (WorldController.Instance.world.IsFurniturePLacementValid (furnitureType, t)) {
+			sr.color = new Color (0.5f, 1f, 0.5f, 0.25f);
+		} else {
+			sr.color = new Color (1f, 0.5f, 0.5f, 0.25f);
+		}
+		Furniture proto = t.world.furniturePrototypes [furnitureType];
+		go.transform.position = new Vector3 (t.X  + ((proto.height - 1) / 2f), t.Y  + ((proto.height - 1) / 2f), 0);
+	}
+
+	public void StartBuildMode(){
+		CurMode = MouseMode.Build;
+	}
+
 }

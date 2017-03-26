@@ -64,15 +64,27 @@ public class Tile : IXmlSerializable{
 		cbTileChanged -= callback;
 	}
 
-	public bool UninstallFurniture(){
-		furniture = null;
+	public bool UnplaceFurniture(){
+
+		if (furniture == null) {
+			return false;
+		}
+
+		Furniture f = furniture;
+
+		for (int x_off = X; x_off < (X + f.width); x_off++) {
+			for (int y_off = Y; y_off < (Y + f.height); y_off++) {
+				Tile t = world.GetTileAt (x_off, y_off);
+				t.furniture = null;
+			}
+		}
 		return true;
 	}
 
 	public bool PlaceFurniture(Furniture objInstance) {
 
 		if(objInstance == null) {
-			return UninstallFurniture ();
+			return UnplaceFurniture ();
 		}
 
 		if (objInstance != null && !objInstance.IsValidPosition (this)) {

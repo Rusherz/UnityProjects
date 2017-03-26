@@ -1,10 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\Controllers\BuildModeController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\Models\Tile.cs">
     <Files>
-      <File FileName="Assets\Script\Controllers\MouseController.cs" Line="54" Column="31" />
-      <File FileName="Assets\Script\Controllers\BuildModeController.cs" Line="62" Column="30" />
-      <File FileName="Assets\Script\Controllers\JobSpriteController.cs" Line="32" Column="154" />
+      <File FileName="Assets\Script\Controllers\BuildModeController.cs" Line="85" Column="32" />
+      <File FileName="Assets\Script\Controllers\MouseController.cs" Line="116" Column="46" />
+      <File FileName="Assets\Script\Models\Furniture.cs" Line="236" Column="21" />
+      <File FileName="Assets\Script\Models\Tile.cs" Line="76" Column="38" />
+      <File FileName="Assets\Script\Models\World.cs" Line="242" Column="3" />
+      <File FileName="Assets\Script\Controllers\FurnitureSpriteController.cs" Line="74" Column="40" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
