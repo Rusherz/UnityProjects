@@ -41,7 +41,7 @@ public class FurnitureSpriteController : MonoBehaviour {
 		furnitureGameObjectMap.Add( furn, furn_go );
 
 		furn_go.name = furn.objectType + "_" + furn.tile.X + "_" + furn.tile.Y;
-		furn_go.transform.position = new Vector3( furn.tile.X, furn.tile.Y, 0);
+		furn_go.transform.position = new Vector3( furn.tile.X + ((furn.width - 1) / 2f), furn.tile.Y + ((furn.height - 1) / 2f), 0);
 		furn_go.transform.SetParent(this.transform, true);
 
 		if (furn.objectType == "Door") {
@@ -54,9 +54,10 @@ public class FurnitureSpriteController : MonoBehaviour {
 			}
 		}
 
-		furn_go.AddComponent<SpriteRenderer>().sprite = GetSpriteForFurniture(furn);
-		furn_go.GetComponent<SpriteRenderer> ().sortingLayerName = "InstalledObject";
-		furn_go.GetComponent<SpriteRenderer> ().color = furn.tint;
+		SpriteRenderer sr = furn_go.AddComponent<SpriteRenderer> ();
+		sr.sprite = GetSpriteForFurniture(furn);
+		sr.sortingLayerName = "InstalledObject";
+		sr.color = furn.tint;
 		furn.RegisterOnChangedCallback( OnFurnitureChanged );
 
 	}

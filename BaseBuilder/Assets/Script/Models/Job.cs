@@ -11,6 +11,8 @@ public class Job {
 
 	public string jobObjectType { get; protected set; }
 
+	public Furniture furnitureprototype;
+
 	public bool acceptAny = false;
 
 	Action<Job> cbJobComplete;

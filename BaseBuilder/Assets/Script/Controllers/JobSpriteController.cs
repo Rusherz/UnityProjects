@@ -29,7 +29,7 @@ public class JobSpriteController : MonoBehaviour {
 		jobGameObjectMap.Add( j, job_go );
 
 		job_go.name = "JOB_" + j.jobObjectType + "_" + j.tile.X + "_" + j.tile.Y;
-		job_go.transform.position = new Vector3( j.tile.X, j.tile.Y, 0);
+		job_go.transform.position = new Vector3( j.tile.X  + ((j.furnitureprototype.height - 1) / 2f), j.tile.Y  + ((j.furnitureprototype.height - 1) / 2f), 0);
 		job_go.transform.SetParent(this.transform, true);
 
 		SpriteRenderer sr = job_go.AddComponent<SpriteRenderer>();

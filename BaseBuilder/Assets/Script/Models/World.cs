@@ -17,7 +17,7 @@ public class World : IXmlSerializable{
 
 	public Path_TileGraph tileGraph;
 
-	Dictionary<string, Furniture> furniturePrototypes;
+	public Dictionary<string, Furniture> furniturePrototypes;
 	public Dictionary<string, Job> furnitureJobPrototypes;
 
 	// The tile width of the world.
@@ -122,6 +122,8 @@ public class World : IXmlSerializable{
 		furniturePrototypes["Door"].SetParam("is_opening", 0);
 		furniturePrototypes ["Door"].RegisterAction(FurnitureActions.Door_UpdateAction);
 		furniturePrototypes ["Door"].IsEnterable = FurnitureActions.Door_IsEnterable;
+
+		furniturePrototypes.Add("Oxygen Generator", new Furniture("Oxygen Generator", 10, 2, 2, false, false));
 	}
 
 	public void RandomizeTiles() {

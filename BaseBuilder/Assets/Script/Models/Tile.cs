@@ -64,18 +64,28 @@ public class Tile : IXmlSerializable{
 		cbTileChanged -= callback;
 	}
 
+	public bool UninstallFurniture(){
+		furniture = null;
+		return true;
+	}
+
 	public bool PlaceFurniture(Furniture objInstance) {
+
 		if(objInstance == null) {
-			furniture = null;
-			return true;
+			return UninstallFurniture ();
 		}
 
-		if(furniture != null) {
-			Debug.LogError("Trying to assign a furniture to a tile that already has one!");
+		if (objInstance != null && !objInstance.IsValidPosition (this)) {
+			Debug.LogError("Trying to assign a furniture to a tile that isnt valid!");
 			return false;
 		}
 
-		furniture = objInstance;
+		for (int x_off = X; x_off < (X + objInstance.width); x_off++) {
+			for (int y_off = Y; y_off < (Y + objInstance.height); y_off++) {
+				Tile t = world.GetTileAt (x_off, y_off);
+				t.furniture = objInstance;
+			}
+		}
 		return true;
 	}
 

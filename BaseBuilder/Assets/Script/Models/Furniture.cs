@@ -60,8 +60,8 @@ public class Furniture : IXmlSerializable{
 
 	public Color32 tint = Color.white;
 
-	int width;
-	int height;
+	public int width;
+	public int height;
 
 	public bool linksToNeighbour{
 		get; protected set;
@@ -93,6 +93,9 @@ public class Furniture : IXmlSerializable{
 
 		if (other.updateActions != null) {
 			this.updateActions = (Action<Furniture, float>)other.updateActions.Clone ();
+		}
+		if (other.funcPositionValidation != null) {
+			this.funcPositionValidation = (Func<Tile, bool>)other.funcPositionValidation.Clone ();
 		}
 		this.IsEnterable = other.IsEnterable;
     }
@@ -167,14 +170,18 @@ public class Furniture : IXmlSerializable{
 	}
 
 	public bool IsValidPosition(Tile t) {
-		if( t.Type != TileType.Floor ) {
-			return false;
-		}
+		for (int x_off = t.X; x_off < (t.X + width); x_off++) {
+			for (int y_off = t.Y; y_off < (t.Y + height); y_off++) {
+				Tile t2 = t.world.GetTileAt (x_off, y_off);
+				if( t2.Type != TileType.Floor ) {
+					return false;
+				}
 
-		if( t.furniture != null ) {
-			return false;
+				if( t2.furniture != null ) {
+					return false;
+				}
+			}
 		}
-
 		return true;
 	}
 
