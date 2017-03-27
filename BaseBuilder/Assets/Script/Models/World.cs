@@ -152,7 +152,7 @@ public class World : IXmlSerializable{
 	}
 
 
-	public Furniture PlaceFurniture(string objectType, Tile t) {
+	public Furniture PlaceFurniture(string objectType, Tile t, bool doRoomFloodFill = true) {
 		if( furniturePrototypes.ContainsKey(objectType) == false ) {
 			Debug.LogError("furniturePrototypes doesn't contain a proto for key: " + objectType);
 			return null;
@@ -169,8 +169,8 @@ public class World : IXmlSerializable{
 
 		furniture.Add (furn);
 
-		if (furn.roomEnclosure) {
-			Room.DoRoomFloodFill (furn);
+		if (doRoomFloodFill && furn.roomEnclosure) {
+			Room.DoRoomFloodFill (furn.tile);
 		}
 
 		if(cbFurnitureCreated != null) {
@@ -354,9 +354,12 @@ public class World : IXmlSerializable{
 			do {
 				int x = int.Parse(reader.GetAttribute("X"));
 				int y = int.Parse(reader.GetAttribute("Y"));
-				Furniture furn = PlaceFurniture(reader.GetAttribute("ObjectType"), tiles [x, y]);
+				Furniture furn = PlaceFurniture(reader.GetAttribute("ObjectType"), tiles [x, y], false);
 				furn.ReadXml (reader);
 			} while(reader.ReadToNextSibling ("Furniture"));
+			foreach (Furniture furn in furniture) {
+				Room.DoRoomFloodFill (furn.tile, true);
+			}
 		}
 	}
 

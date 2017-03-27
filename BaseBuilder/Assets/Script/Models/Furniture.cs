@@ -228,13 +228,19 @@ public class Furniture : IXmlSerializable{
 
 	public void Deconstruct(){
 		Debug.Log ("Deconstructing");
+		tile.UnplaceFurniture ();
 
 		tile.world.furniture.Remove (this);
-		tile.UnplaceFurniture ();
 
 		if (cbOnRemoved != null) {
 			cbOnRemoved (this);
 		}
+
+		if (roomEnclosure) {
+			Room.DoRoomFloodFill (this.tile);
+		}
+
+		tile.world.InvalidateTileGraph ();
 
 	}
 
