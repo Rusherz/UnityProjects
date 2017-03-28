@@ -32,6 +32,9 @@ public class Furniture : IXmlSerializable{
 		furnParam [s] = def;
 	}
 
+	public Vector2 jobSpotOffset = Vector2.zero;
+	public Vector2 jobSpawnSpot = Vector2.zero;
+
 	public void ChangeParam(string s, float def){
 		if (furnParam.ContainsKey (s) == false) {
 			furnParam [s] = def;
@@ -86,7 +89,10 @@ public class Furniture : IXmlSerializable{
         this.width = other.width;
         this.height = other.height;
 		this.tint = other.tint;
-        this.linksToNeighbour = other.linksToNeighbour;
+		this.linksToNeighbour = other.linksToNeighbour;
+
+		this.jobSpotOffset = other.jobSpotOffset;
+		this.jobSpawnSpot = other.jobSpawnSpot;
 
 		this.furnParam = new Dictionary<string, float>(other.furnParam);
 
@@ -136,19 +142,19 @@ public class Furniture : IXmlSerializable{
 			int x = tile.X;
 			int y = tile.Y;
 
-			t = tile.world.GetTileAt(x, y+1);
+			t = World.currentWorld.GetTileAt(x, y+1);
 			if(t != null && t.furniture != null && t.furniture.cbOnChanged != null && t.furniture.objectType == obj.objectType) {
 				t.furniture.cbOnChanged(t.furniture);
 			}
-			t = tile.world.GetTileAt(x+1, y);
+			t = World.currentWorld.GetTileAt(x+1, y);
 			if(t != null && t.furniture != null && t.furniture.cbOnChanged != null && t.furniture.objectType == obj.objectType) {
 				t.furniture.cbOnChanged(t.furniture);
 			}
-			t = tile.world.GetTileAt(x, y-1);
+			t = World.currentWorld.GetTileAt(x, y-1);
 			if(t != null && t.furniture != null && t.furniture.cbOnChanged != null && t.furniture.objectType == obj.objectType) {
 				t.furniture.cbOnChanged(t.furniture);
 			}
-			t = tile.world.GetTileAt(x-1, y);
+			t = World.currentWorld.GetTileAt(x-1, y);
 			if(t != null && t.furniture != null && t.furniture.cbOnChanged != null && t.furniture.objectType == obj.objectType) {
 				t.furniture.cbOnChanged(t.furniture);
 			}
@@ -181,7 +187,7 @@ public class Furniture : IXmlSerializable{
 	public bool IsValidPosition(Tile t) {
 		for (int x_off = t.X; x_off < (t.X + width); x_off++) {
 			for (int y_off = t.Y; y_off < (t.Y + height); y_off++) {
-				Tile t2 = t.world.GetTileAt (x_off, y_off);
+				Tile t2 = World.currentWorld.GetTileAt (x_off, y_off);
 				if( t2.Type != TileType.Floor ) {
 					return false;
 				}
@@ -207,18 +213,32 @@ public class Furniture : IXmlSerializable{
 
 	public void AddJob(Job j){
 		jobs.Add (j);
-		tile.world.jobQueue.Enqueue (j);
+		j.furniture = this;
+		j.RegisterJobStoppedCallBack (OnJobStopped);
+		World.currentWorld.jobQueue.Enqueue (j);
 	}
 
-	public void RemoveJob(Job j){
+	void OnJobStopped(Job j){
+		RemoveJob (j);
+	}
+
+	protected void RemoveJob(Job j){
+		j.UnregisterJobCStoppedCallBack (OnJobStopped);
 		jobs.Remove (j);
-		j.CancelJob ();
-		tile.world.jobQueue.Remove (j);
+		j.furniture = null;
 	}
 
-	public void ClearJobs(){
-		foreach (Job j in jobs) {
+	protected void ClearJobs(){
+		Job[] jobs_array = jobs.ToArray ();
+		foreach (Job j in jobs_array) {
 			RemoveJob (j);
+		}
+	}
+
+	public void CancelJob(){
+		Job[] jobs_array = jobs.ToArray ();
+		foreach (Job j in jobs_array) {
+			j.CancelJob ();
 		}
 	}
 
@@ -230,7 +250,7 @@ public class Furniture : IXmlSerializable{
 		Debug.Log ("Deconstructing");
 		tile.UnplaceFurniture ();
 
-		tile.world.furniture.Remove (this);
+		World.currentWorld.furniture.Remove (this);
 
 		if (cbOnRemoved != null) {
 			cbOnRemoved (this);
@@ -240,10 +260,17 @@ public class Furniture : IXmlSerializable{
 			Room.DoRoomFloodFill (this.tile);
 		}
 
-		tile.world.InvalidateTileGraph ();
+		World.currentWorld.InvalidateTileGraph ();
 
 	}
 
+	public Tile JobSpotOffset(){
+		return World.currentWorld.GetTileAt (tile.X + (int)jobSpotOffset.x, tile.Y + (int)jobSpotOffset.y); 
+	}
+
+	public Tile GetSpawnSpotTile(){
+		return World.currentWorld.GetTileAt (tile.X + (int)jobSpawnSpot.x, tile.Y + (int)jobSpawnSpot.y); 
+	}
 
 
 	/*

@@ -74,7 +74,7 @@ public class BuildModeController : MonoBehaviour {
 
 				WorldController.Instance.world.jobQueue.Enqueue (j);
 
-				j.RegisterJobCancelCallBack ((theJob) => {
+				j.RegisterJobStoppedCallBack ((theJob) => {
 					theJob.tile.JobPending = null;
 				});
 			}

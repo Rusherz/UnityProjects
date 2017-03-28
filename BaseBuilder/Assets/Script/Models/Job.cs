@@ -13,20 +13,27 @@ public class Job {
 
 	public Furniture furnitureprototype;
 
+	public Furniture furniture;
+
 	public bool acceptAny = false;
 
-	Action<Job> cbJobComplete;
-	Action<Job> cbJobCancel;
+	protected float jobTimeRequired;
+
+	protected bool jobrepeats = false;
+
+	Action<Job> cbJobCompleted;
+	Action<Job> cbJobStopped;
 	Action<Job> cbJobWorked;
 	public Dictionary<string, Inventory> InventoryReq;
 
 	public bool canTakeFromStockPile = true;
 
-	public Job(Tile tile, string jobObjectType, Action<Job> cbJobComplete, float jobTime, Inventory[] InventoryReq){
+	public Job(Tile tile, string jobObjectType, Action<Job> cbJobComplete, float jobTime, Inventory[] InventoryReq, bool jobRepeats = false){
 		this.tile = tile;
 		this.jobObjectType = jobObjectType;
-		this.cbJobComplete += cbJobComplete;
-		this.jobTime = jobTime;
+		this.cbJobCompleted += cbJobComplete;
+		this.jobTimeRequired = this.jobTime = jobTime;
+		this.jobrepeats = jobrepeats;
 
 		this.InventoryReq = new Dictionary<string, Inventory> ();
 		if (InventoryReq != null) {
@@ -46,7 +53,7 @@ public class Job {
 	protected Job(Job other){
 		this.tile = other.tile;
 		this.jobObjectType = other.jobObjectType;
-		this.cbJobComplete = other.cbJobComplete;
+		this.cbJobCompleted = other.cbJobCompleted;
 		this.jobTime = other.jobTime;
 
 		this.InventoryReq = new Dictionary<string, Inventory> ();
@@ -61,24 +68,24 @@ public class Job {
 		return new Job (this);
 	}
 
-	public void RegisterJobCompleteCallBack(Action<Job> cb){
-		cbJobComplete += cb;
+	public void RegisterJobCompletedCallBack(Action<Job> cb){
+		cbJobCompleted += cb;
 	}
 
-	public void RegisterJobCancelCallBack(Action<Job> cb){
-		cbJobCancel += cb;
+	public void RegisterJobStoppedCallBack(Action<Job> cb){
+		cbJobStopped += cb;
 	}
 
 	public void RegisterJobWorkedCallBack(Action<Job> cb){
 		cbJobWorked += cb;
 	}
 
-	public void UnregisterJobCompleteCallBack(Action<Job> cb){
-		cbJobComplete -= cb;
+	public void UnregisterJobCompletedCallBack(Action<Job> cb){
+		cbJobCompleted -= cb;
 	}
 
-	public void UnregisterJobCancelCallBack(Action<Job> cb){
-		cbJobCancel -= cb;
+	public void UnregisterJobCStoppedCallBack(Action<Job> cb){
+		cbJobStopped -= cb;
 	}
 
 	public void UnregisterJobWorkedCallBack(Action<Job> cb){
@@ -101,17 +108,24 @@ public class Job {
 		}
 
 		if(jobTime <= 0){
-			if(cbJobComplete != null){
-				cbJobComplete(this);
+			if(cbJobCompleted != null){
+				cbJobCompleted(this);
+			}
+			if (!jobrepeats) {
+				if (cbJobStopped != null) {
+					cbJobStopped (this);
+				} else {
+					jobTime += jobTimeRequired;
+				}
 			}
 		}
 	}
 
 	public void CancelJob(){
-		if (cbJobCancel != null) {
-			cbJobCancel (this);
+		if (cbJobStopped != null) {
+			cbJobStopped (this);
 		}
-		tile.world.jobQueue.Remove (this);
+		World.currentWorld.jobQueue.Remove (this);
 	}
 
 	public bool HasMaterial(){

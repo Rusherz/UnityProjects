@@ -20,11 +20,10 @@ public class World : IXmlSerializable{
 	public Dictionary<string, Furniture> furniturePrototypes;
 	public Dictionary<string, Job> furnitureJobPrototypes;
 
-	// The tile width of the world.
 	public int Width { get; protected set; }
-
-	// The tile height of the world
 	public int Height { get; protected set; }
+
+	static public World currentWorld { get; protected set; }
 
 	Action<Furniture> cbFurnitureCreated;
 	Action<Character> cbCharacterCreated;
@@ -59,6 +58,8 @@ public class World : IXmlSerializable{
 	}
 
 	void SetUpWorld(int width, int height){
+		currentWorld = this;
+
 		jobQueue = new JobQueue();
 
 		Width = width;
@@ -71,7 +72,7 @@ public class World : IXmlSerializable{
 
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
-				tiles[x,y] = new Tile(this, x, y);
+				tiles[x,y] = new Tile(x, y);
 				tiles [x, y].RegisterTileTypeChangedCallback (OnTileChanged);
 				tiles [x, y].room = GetOutSideRoom ();
 			}
@@ -125,6 +126,11 @@ public class World : IXmlSerializable{
 
 		furniturePrototypes.Add("Oxygen Generator", new Furniture("Oxygen Generator", 10, 2, 2, false, false));
 		furniturePrototypes ["Oxygen Generator"].RegisterAction(FurnitureActions.OxygenGenerator_UpdateAction);
+
+		furniturePrototypes.Add("Mining Drone Station", new Furniture("Mining Drone Station", 1, 3, 3, false, false));
+		furniturePrototypes ["Mining Drone Station"].RegisterAction(FurnitureActions.MiningDroneStation_UpdateAction);
+		furniturePrototypes ["Mining Drone Station"].jobSpotOffset = new Vector2 (1, 0);
+		furniturePrototypes ["Mining Drone Station"].jobSpawnSpot = new Vector2 (0, 0);
 	}
 
 	public void RandomizeTiles() {

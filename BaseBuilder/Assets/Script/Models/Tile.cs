@@ -43,15 +43,12 @@ public class Tile : IXmlSerializable{
 
 	public Inventory inventory { get; set;}
 
-	public World world { get; protected set; }
-
 	public int X { get; protected set; }
 	public int Y { get; protected set; }
 
 	Action<Tile> cbTileChanged;
 
-	public Tile( World world, int x, int y ) {
-		this.world = world;
+	public Tile(int x, int y ) {
 		this.X = x;
 		this.Y = y;
 	}
@@ -74,7 +71,7 @@ public class Tile : IXmlSerializable{
 
 		for (int x_off = X; x_off < (X + f.width); x_off++) {
 			for (int y_off = Y; y_off < (Y + f.height); y_off++) {
-				Tile t = world.GetTileAt (x_off, y_off);
+				Tile t = World.currentWorld.GetTileAt (x_off, y_off);
 				t.furniture = null;
 			}
 		}
@@ -94,7 +91,7 @@ public class Tile : IXmlSerializable{
 
 		for (int x_off = X; x_off < (X + objInstance.width); x_off++) {
 			for (int y_off = Y; y_off < (Y + objInstance.height); y_off++) {
-				Tile t = world.GetTileAt (x_off, y_off);
+				Tile t = World.currentWorld.GetTileAt(x_off, y_off);
 				t.furniture = objInstance;
 			}
 		}
@@ -144,16 +141,16 @@ public class Tile : IXmlSerializable{
 			ns = new Tile[8];// Tile Order: N E S W NE SE SW NW
 		}
 
-		ns[0] = world.GetTileAt (X, Y + 1);
-		ns[1] = world.GetTileAt (X + 1, Y);
-		ns[2] = world.GetTileAt (X, Y - 1);
-		ns[3] = world.GetTileAt (X - 1, Y);
+		ns[0] = World.currentWorld.GetTileAt (X, Y + 1);
+		ns[1] = World.currentWorld.GetTileAt (X + 1, Y);
+		ns[2] = World.currentWorld.GetTileAt (X, Y - 1);
+		ns[3] = World.currentWorld.GetTileAt (X - 1, Y);
 
 		if (diagOaky) {
-			ns[4] = world.GetTileAt (X + 1, Y + 1);
-			ns[5] = world.GetTileAt (X + 1, Y - 1);
-			ns[6] = world.GetTileAt (X - 1, Y - 1);
-			ns[7] = world.GetTileAt (X - 1, Y + 1);
+			ns[4] = World.currentWorld.GetTileAt (X + 1, Y + 1);
+			ns[5] = World.currentWorld.GetTileAt (X + 1, Y - 1);
+			ns[6] = World.currentWorld.GetTileAt (X - 1, Y - 1);
+			ns[7] = World.currentWorld.GetTileAt (X - 1, Y + 1);
 		}
 
 		return ns;
@@ -172,16 +169,16 @@ public class Tile : IXmlSerializable{
 	}
 
 	public Tile North(){
-		return world.GetTileAt (X, Y + 1);
+		return World.currentWorld.GetTileAt (X, Y + 1);
 	}
 	public Tile East(){
-		return world.GetTileAt (X + 1, Y);
+		return World.currentWorld.GetTileAt (X + 1, Y);
 	}
 	public Tile South(){
-		return world.GetTileAt (X, Y - 1);
+		return World.currentWorld.GetTileAt (X, Y - 1);
 	}
 	public Tile West(){
-		return world.GetTileAt (X + 1, Y);
+		return World.currentWorld.GetTileAt (X + 1, Y);
 	}
 
 	public XmlSchema GetSchema(){

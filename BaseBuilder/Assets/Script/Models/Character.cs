@@ -8,12 +8,16 @@ using System.Xml.Schema;
 public class Character : IXmlSerializable {
 	public float X {
 		get {
+			if (nextTile == null)
+				return currTile.X;
 			return Mathf.Lerp( currTile.X, nextTile.X, movementPercentage );
 		}
 	}
 
 	public float Y {
 		get {
+			if (nextTile == null)
+				return currTile.Y;
 			return Mathf.Lerp( currTile.Y, nextTile.Y, movementPercentage );
 		}
 	}
@@ -52,15 +56,15 @@ public class Character : IXmlSerializable {
 	}
 
 	void GetNewJob(){
-		myJob = currTile.world.jobQueue.Dequeue();
+		myJob = World.currentWorld.jobQueue.Dequeue();
 		if (myJob == null) {
 			return;
 		}
 		destTile = myJob.tile;
-		myJob.RegisterJobCompleteCallBack(OnJobEnded);
-		myJob.RegisterJobCancelCallBack(OnJobEnded);
+		myJob.RegisterJobCompletedCallBack(OnJobStopped);
+		myJob.RegisterJobStoppedCallBack(OnJobStopped);
 
-		pathAStart = new Path_AStar (currTile.world, currTile, destTile);
+		pathAStart = new Path_AStar (World.currentWorld, currTile, destTile);
 		if (pathAStart.Length () == 0) {
 			Debug.LogError ("Path to dest does not exist.");
 			AbandonJob ();
@@ -86,7 +90,7 @@ public class Character : IXmlSerializable {
 				if (myJob.NeededMaterial (inventory) > 0) {
 					destTile = myJob.tile;
 					if (currTile == myJob.tile) {
-						currTile.world.inventoryManager.PlaceInventory (myJob, inventory);
+						World.currentWorld.inventoryManager.PlaceInventory (myJob, inventory);
 						myJob.DoWork (0);
 						if (inventory.stackSize == 0) {
 							inventory = null;
@@ -100,7 +104,7 @@ public class Character : IXmlSerializable {
 						return;
 					}
 				} else {
-					if (currTile.world.inventoryManager.PlaceInventory (currTile, inventory) == false) {
+					if (World.currentWorld.inventoryManager.PlaceInventory (currTile, inventory) == false) {
 						Debug.LogError ("Cannot place inventory in current tile.");
 						inventory = null;
 					}
@@ -110,12 +114,12 @@ public class Character : IXmlSerializable {
 				if (currTile.inventory != null 
 					&& (currTile.furniture == null || !currTile.furniture.IsStockPile() || myJob.canTakeFromStockPile)
 					&& myJob.NeededMaterial (currTile.inventory) > 0) {
-					currTile.world.inventoryManager.PlaceInventory (this, currTile.inventory, myJob.NeededMaterial (currTile.inventory));
+					World.currentWorld.inventoryManager.PlaceInventory (this, currTile.inventory, myJob.NeededMaterial (currTile.inventory));
 				} else {
 
 					Inventory reqNotMet = myJob.GetFirstNeededMaterial ();
 
-					Inventory supply = currTile.world.inventoryManager.GetClosestInventoryOfType (reqNotMet.objectType, currTile, 
+					Inventory supply = World.currentWorld.inventoryManager.GetClosestInventoryOfType (reqNotMet.objectType, currTile, 
 						reqNotMet.maxStackSize - reqNotMet.stackSize, myJob.canTakeFromStockPile);
 					if (supply == null) {
 						Debug.Log ("No tile contains objects of type " + reqNotMet.objectType);
@@ -140,7 +144,7 @@ public class Character : IXmlSerializable {
 
 	public void AbandonJob(){
 		nextTile = destTile = currTile;
-		currTile.world.jobQueue.Enqueue (myJob);
+		World.currentWorld.jobQueue.Enqueue (myJob);
 		myJob = null;
 	}
 
@@ -152,7 +156,7 @@ public class Character : IXmlSerializable {
 
 		if (nextTile == null || currTile == nextTile) {
 			if (pathAStart == null || pathAStart.Length() == 0) {
-				pathAStart = new Path_AStar (currTile.world, currTile, destTile);
+				pathAStart = new Path_AStar (World.currentWorld, currTile, destTile);
 				if (pathAStart.Length () == 0) {
 					Debug.LogError ("Path to dest does not exist.");
 					AbandonJob ();
@@ -222,12 +226,10 @@ public class Character : IXmlSerializable {
 		cbCharacterChanged -= cb;
 	}
 
-	void OnJobEnded(Job j) {
+	void OnJobStopped(Job j) {
 		// Job completed or was cancelled.
 
-		j.UnregisterJobCancelCallBack (OnJobEnded);
-		j.UnregisterJobCompleteCallBack (OnJobEnded);
-
+		j.UnregisterJobCStoppedCallBack (OnJobStopped);
 
 		if(j != myJob) {
 			Debug.LogError("Character being told about job that isn't his. You forgot to unregister something.");

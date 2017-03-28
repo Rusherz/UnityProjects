@@ -1,33 +1,19 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\Models\Room.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\Models\FurnitureActions.cs">
     <Files>
-      <File FileName="Assets\Script\Controllers\BuildModeController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Script\Controllers\MouseController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Script\Models\Furniture.cs" Line="243" Column="37" />
-      <File FileName="Assets\Script\Models\Tile.cs" Line="1" Column="1" />
-      <File FileName="Assets\Script\Models\World.cs" Line="361" Column="44" />
-      <File FileName="Assets\Script\Controllers\FurnitureSpriteController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Script\Models\Room.cs" Line="100" Column="17" />
+      <File FileName="Assets\Script\UI\BuildMenu.cs" Line="28" Column="1" />
+      <File FileName="Assets\Script\Models\Job.cs" Line="118" Column="33" />
+      <File FileName="Assets\Script\Models\Character.cs" Line="232" Column="50" />
+      <File FileName="Assets\Script\Models\FurnitureActions.cs" Line="129" Column="123" />
+      <File FileName="Assets\Script\Models\Furniture.cs" Line="225" Column="11" />
+      <File FileName="Assets\Script\Models\World.cs" Line="133" Column="77" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="BaseBuilder" expanded="True">
-            <Node name="Assembly-CSharp" expanded="True">
-              <Node name="Script" expanded="True">
-                <Node name="Models" expanded="True">
-                  <Node name="Room.cs" selected="True" />
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="D:\gitProjects\unityprojects\BaseBuilder\Assets\Script\Models\Tile.cs" line="141" column="55" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

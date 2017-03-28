@@ -38,8 +38,8 @@ public class JobSpriteController : MonoBehaviour {
 		job_go.GetComponent<SpriteRenderer> ().sortingLayerName = "InstalledObject";
 
 		if (j.jobObjectType == "Door") {
-			Tile northTile = j.tile.world.GetTileAt (j.tile.X, j.tile.Y + 1 );
-			Tile southTile = j.tile.world.GetTileAt (j.tile.X, j.tile.Y - 1 );
+			Tile northTile = World.currentWorld.GetTileAt (j.tile.X, j.tile.Y + 1 );
+			Tile southTile = World.currentWorld.GetTileAt (j.tile.X, j.tile.Y - 1 );
 
 			if (northTile != null && southTile != null && northTile.furniture != null && southTile.furniture != null
 				&& northTile.furniture.objectType == "Wall" && southTile.furniture.objectType == "Wall") {
@@ -47,15 +47,15 @@ public class JobSpriteController : MonoBehaviour {
 			}
 		}
 
-		j.RegisterJobCompleteCallBack (OnJobEnded);
-		j.RegisterJobCancelCallBack (OnJobEnded);
+		j.RegisterJobCompletedCallBack (OnJobEnded);
+		j.RegisterJobStoppedCallBack (OnJobEnded);
 	}
 
 	void OnJobEnded(Job j){
 
 		GameObject job_go = jobGameObjectMap [j];
-		j.UnregisterJobCompleteCallBack (OnJobCreated);
-		j.UnregisterJobCancelCallBack (OnJobEnded);
+		j.UnregisterJobCompletedCallBack (OnJobCreated);
+		j.UnregisterJobCStoppedCallBack (OnJobEnded);
 		Destroy (job_go);
 
 	}

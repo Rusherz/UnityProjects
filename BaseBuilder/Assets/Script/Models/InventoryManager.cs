@@ -42,7 +42,7 @@ public class InventoryManager {
 				inventory [tile.inventory.objectType] = new List<Inventory> ();
 			}
 			inventory [tile.inventory.objectType].Add (tile.inventory);
-			tile.world.OnInventoryCreated (tile.inventory);
+			World.currentWorld.OnInventoryCreated (tile.inventory);
 		}
 		return true;
 	}

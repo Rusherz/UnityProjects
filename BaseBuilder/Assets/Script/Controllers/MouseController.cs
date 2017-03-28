@@ -167,7 +167,7 @@ public class MouseController : MonoBehaviour {
 		} else {
 			sr.color = new Color (1f, 0.5f, 0.5f, 0.25f);
 		}
-		Furniture proto = t.world.furniturePrototypes [furnitureType];
+		Furniture proto = World.currentWorld.furniturePrototypes [furnitureType];
 		go.transform.position = new Vector3 (t.X  + ((proto.height - 1) / 2f), t.Y  + ((proto.height - 1) / 2f), 0);
 	}
 

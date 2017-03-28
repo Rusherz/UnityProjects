@@ -43,7 +43,7 @@ public static class FurnitureActions {
 
 		if(furn.tile.inventory != null && 
 			furn.tile.inventory.stackSize >= furn.tile.inventory.maxStackSize){
-			furn.ClearJobs ();
+			furn.CancelJob ();
 			return;
 		}
 
@@ -53,7 +53,7 @@ public static class FurnitureActions {
 
 		if (furn.tile.inventory != null && furn.tile.inventory.stackSize == 0) {
 			Debug.LogError ("This stack has an inventory of 0 wtf ERROR");
-			furn.ClearJobs ();
+			furn.CancelJob ();
 			return;
 		}
 
@@ -76,16 +76,17 @@ public static class FurnitureActions {
 			0,
 			itemsDesired);
 		j.canTakeFromStockPile = false;
+
 		j.RegisterJobWorkedCallBack (StockPile_JobWorked);
 		furn.AddJob (j);
 	}
 
 	static void StockPile_JobWorked(Job j){
-		j.tile.furniture.RemoveJob (j);
+		j.CancelJob ();
 
 		foreach(Inventory inv in j.InventoryReq.Values){
 			if(inv.stackSize > 0){
-				j.tile.world.inventoryManager.PlaceInventory (j.tile, inv);
+				World.currentWorld.inventoryManager.PlaceInventory (j.tile, inv);
 				return;
 			}
 		}
@@ -99,4 +100,34 @@ public static class FurnitureActions {
 		}
 	}
 
+	public static void MiningDroneStation_UpdateAction(Furniture furn, float deltaTime){
+		Tile spawnSpot = furn.GetSpawnSpotTile ();
+		if (furn.JobCount() > 0) {
+
+			if (spawnSpot.inventory != null && spawnSpot.inventory.stackSize >= spawnSpot.inventory.maxStackSize) {
+				furn.CancelJob ();
+			}
+
+			return;
+		}
+
+		if (spawnSpot.inventory != null && spawnSpot.inventory.stackSize >= spawnSpot.inventory.maxStackSize) {
+			return;
+		}
+
+		Tile jobSpot = furn.JobSpotOffset ();
+
+		if (jobSpot.inventory != null && (jobSpot.inventory.stackSize >= jobSpot.inventory.maxStackSize)) {
+			return;
+		}
+		Job j = new Job (jobSpot, null, MiningDroneStation_JobComplete, 1f, null, true);
+		furn.AddJob (j);
+	}
+
+	public static void MiningDroneStation_JobComplete(Job j){
+		
+		World.currentWorld.inventoryManager.PlaceInventory (j.furniture.GetSpawnSpotTile(), new Inventory ("Steel Plate", 50, 20));
+
+	}
+	
 }

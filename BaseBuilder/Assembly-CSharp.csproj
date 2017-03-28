@@ -70,6 +70,7 @@
      <Compile Include="Assets\Script\PathFinding\Path_Edge.cs" />
      <Compile Include="Assets\Script\PathFinding\Path_Node.cs" />
      <Compile Include="Assets\Script\PathFinding\Path_TileGraph.cs" />
+     <Compile Include="Assets\Script\UI\BuildMenu.cs" />
      <Compile Include="Assets\Script\UI\UIFurnitureType.cs" />
      <Compile Include="Assets\Script\UI\UIRoomDetails.cs" />
      <Compile Include="Assets\Script\UI\UIRoomIndex.cs" />
