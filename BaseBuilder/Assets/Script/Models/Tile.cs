@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Xml;
 using System.Xml.Serialization;
@@ -51,7 +52,10 @@ public class Tile : IXmlSerializable{
 	public Tile(int x, int y ) {
 		this.X = x;
 		this.Y = y;
+		characters = new List<Character> ();
 	}
+
+	public List<Character> characters;
 
 	public void RegisterTileTypeChangedCallback(Action<Tile> callback) {
 		cbTileChanged += callback;

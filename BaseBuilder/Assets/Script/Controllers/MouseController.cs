@@ -51,13 +51,73 @@ public class MouseController : MonoBehaviour {
 			}
 		}
 
-
-			UpdateDragging ();
-
+		UpdateSelection ();
+		UpdateDragging ();
 		UpdateCameraMovement();
 
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 		lastFramePosition.z = 0;
+	}
+
+	public class SelectionInfo{
+		public Tile tile;
+		public object[] objectArray;
+		public int subSelection = 0;
+	}
+
+	SelectionInfo mySelection;
+
+	void UpdateSelection(){
+
+		if (Input.GetKeyUp (KeyCode.Escape)) {
+			mySelection = null;
+		}
+
+		if (CurMode != MouseMode.Select) {
+			return;
+		}
+
+		if (EventSystem.current.IsPointerOverGameObject ()) {
+			return;
+		}
+
+		if (Input.GetMouseButtonUp (0)) {
+			Tile tileUnderMouse = GetMouseOverTile ();
+
+			if (tileUnderMouse == null) {
+				return;
+			}
+			if (mySelection == null || mySelection.tile != tileUnderMouse) {			
+				mySelection = new SelectionInfo ();
+				mySelection.tile = tileUnderMouse;
+				RebuildSelectionInfo ();
+				for (int i = 0; i < mySelection.objectArray.Length; i++) {
+					if (mySelection.objectArray [i] != null) {
+						mySelection.subSelection = i;
+						break;
+					}
+				}
+			} else {
+				RebuildSelectionInfo ();
+				for (int i = 0; i < mySelection.objectArray.Length; i++) {
+					if (mySelection.objectArray [i] != null && i != mySelection.subSelection) {
+						mySelection.subSelection = i;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	void RebuildSelectionInfo(){
+		mySelection.objectArray = new object[mySelection.tile.characters.Count + 3];
+		for (int i = 0; i < mySelection.tile.characters.Count; i++) {
+			mySelection.objectArray [i] = mySelection.tile.characters [i];
+		}
+		mySelection.objectArray [mySelection.objectArray.Length - 3] = mySelection.tile.furniture;
+		mySelection.objectArray [mySelection.objectArray.Length - 2] = mySelection.tile.inventory;
+		mySelection.objectArray [mySelection.objectArray.Length - 1] = mySelection.tile;
+
 	}
 
 	void UpdateDragging() {

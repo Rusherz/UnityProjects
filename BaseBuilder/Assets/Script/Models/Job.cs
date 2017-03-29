@@ -33,7 +33,7 @@ public class Job {
 		this.jobObjectType = jobObjectType;
 		this.cbJobCompleted += cbJobComplete;
 		this.jobTimeRequired = this.jobTime = jobTime;
-		this.jobrepeats = jobrepeats;
+		this.jobrepeats = jobRepeats;
 
 		this.InventoryReq = new Dictionary<string, Inventory> ();
 		if (InventoryReq != null) {

@@ -8,7 +8,9 @@ public class Path_AStar {
 
 	Queue<Tile> path;
 
-	public Path_AStar(World world, Tile tileStart, Tile tileEnd){
+	public Path_AStar(World world, Tile tileStart, Tile tileEnd, string objectType=null, int desiredAmount=0, bool canTakeFromStockpile=false){
+		
+
 		if (world.tileGraph == null) {
 			world.tileGraph = new Path_TileGraph (world);
 		}
@@ -18,12 +20,16 @@ public class Path_AStar {
 			Debug.Log ("Not in list of nodes");
 			return;
 		}
-		if (!nodes.ContainsKey (tileEnd)) {
-			Debug.Log ("Not in list of nodes");
-			return;
-		}
 		Path_Node<Tile> start = nodes[tileStart];
-		Path_Node<Tile> end = nodes[tileEnd];
+		Path_Node<Tile> end = null;
+
+		if (tileEnd != null) {
+			if (!nodes.ContainsKey (tileEnd)) {
+				Debug.Log ("Not in list of nodes");
+				return;
+			}
+			end = nodes [tileEnd];
+		}
 
 		List<Path_Node<Tile>> ClosedSet = new List<Path_Node<Tile>> ();
 
@@ -45,9 +51,17 @@ public class Path_AStar {
 		while (OpenSet.Count > 0) {
 			Path_Node<Tile> current = OpenSet.Dequeue ();
 
-			if (current == end) {
+			if (end != null && current == end) {
 				reconstruct_path (came_from, current);
 				return;
+			} else {
+				if(end == null && current.data.inventory != null 
+					&& current.data.inventory.objectType == objectType){
+					if (canTakeFromStockpile || current.data.furniture == null || current.data.furniture.IsStockPile () == false) {
+						reconstruct_path (came_from, current);
+						return;
+					}
+				}
 			}
 
 			ClosedSet.Add (current);
@@ -81,6 +95,9 @@ public class Path_AStar {
 	}
 
 	float cost_estimate(Path_Node<Tile> start, Path_Node<Tile> end){
+		if (end == null) {
+			return 0;
+		}
 		return Mathf.Sqrt (Mathf.Pow (start.data.X - end.data.X, 2) + Mathf.Pow (start.data.Y - end.data.Y, 2));
 	}
 
@@ -115,6 +132,13 @@ public class Path_AStar {
 		}
 
 		return path.Count;
+	}
+
+	public Tile EndTile(){
+		if (path == null || path.Count == 0) {
+			return null;
+		}
+		return path.Last ();
 	}
 
 }

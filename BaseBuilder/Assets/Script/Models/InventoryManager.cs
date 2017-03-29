@@ -97,17 +97,20 @@ public class InventoryManager {
 	}
 
 	public Inventory GetClosestInventoryOfType(string type, Tile t, int amount, bool canTakeFromStockPile){
+		Path_AStar path = GetPathToInventoryOfType (type, t, amount, canTakeFromStockPile);
+
+		return path.EndTile ().inventory;
+	}
+
+	public Path_AStar GetPathToInventoryOfType(string type, Tile t, int amount, bool canTakeFromStockPile){
 		if (!inventory.ContainsKey (type)) {
 			Debug.LogError ("Trying to add inventory to a job that it doesnt want.");
 			return null;
 		}
-		foreach (Inventory inv in inventory[type]) {
-			if (inv.tile != null && (canTakeFromStockPile || inv.tile.furniture == null || inv.tile.furniture.IsStockPile() == false)) {
-				return inv;
-			}
-		}
 
-		return null;
+		Path_AStar path = new Path_AStar (World.currentWorld, t, null, type);
+
+		return path;
 	}
 
 }

@@ -21,9 +21,18 @@ public class Character : IXmlSerializable {
 			return Mathf.Lerp( currTile.Y, nextTile.Y, movementPercentage );
 		}
 	}
-
+	private Tile _currTile;
 	public Tile currTile {
-		get; protected set;
+		get{
+			return _currTile;
+		}
+		protected set{
+			if (_currTile != null) {
+				_currTile.characters.Remove (this);
+			}
+			_currTile = value;
+			_currTile.characters.Add (this);
+		}
 	}
 
 	public Inventory inventory;
@@ -51,6 +60,8 @@ public class Character : IXmlSerializable {
 
 	Job myJob;
 
+	float jobSearchCooldown = 0;
+
 	public Character(Tile tile) {
 		currTile = destTile = nextTile = tile;
 	}
@@ -76,8 +87,15 @@ public class Character : IXmlSerializable {
 	void Update_DoJob(float deltaTime){
 		if(myJob == null) {
 			// Grab a new job.
+			jobSearchCooldown -= deltaTime;
+			if (jobSearchCooldown > 0) {
+				return;
+			}
+
 			GetNewJob();
 			if (myJob == null) {
+				//Debug.Log ("Searching for a job");
+				jobSearchCooldown = UnityEngine.Random.Range (0.5f, 1f);
 				destTile = currTile;
 				return;
 			}
@@ -119,16 +137,30 @@ public class Character : IXmlSerializable {
 
 					Inventory reqNotMet = myJob.GetFirstNeededMaterial ();
 
-					Inventory supply = World.currentWorld.inventoryManager.GetClosestInventoryOfType (reqNotMet.objectType, currTile, 
-						reqNotMet.maxStackSize - reqNotMet.stackSize, myJob.canTakeFromStockPile);
-					if (supply == null) {
-						Debug.Log ("No tile contains objects of type " + reqNotMet.objectType);
-						AbandonJob ();
+					if (currTile != nextTile) {
+						// We are still moving dont need to check for a new path yet.
 						return;
 					}
-					destTile = supply.tile;
-					return;
 
+					if (pathAStart != null && pathAStart.EndTile() != null && pathAStart.EndTile ().inventory != null && pathAStart.EndTile ().inventory.objectType == reqNotMet.objectType) {
+
+					} else {
+						
+						Path_AStar newPath = World.currentWorld.inventoryManager.GetPathToInventoryOfType (reqNotMet.objectType, currTile, 
+							reqNotMet.maxStackSize - reqNotMet.stackSize, myJob.canTakeFromStockPile);
+						if (pathAStart == null || pathAStart.Length () == 0) {
+							Debug.Log ("No tile contains objects of type " + reqNotMet.objectType);
+							AbandonJob ();
+							return;
+						}
+						destTile = newPath.EndTile ();
+
+						pathAStart = newPath;
+						// Remove the tile we are already standing on.
+						nextTile = pathAStart.DequeueNextTile ();
+					}
+
+					return;
 				}
 
 			}
