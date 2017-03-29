@@ -35,12 +35,25 @@ public class World : IXmlSerializable{
 	public World(int width, int height) {
 		SetUpWorld (width, height);
 
-		CreateCharacter(GetTileAt( Width/2, Height/2 ) );
-	}
+        CreateCharacter(GetTileAt(Width / 2, Height / 2));
+        CreateCharacter(GetTileAt(Width / 2 - 1, Height / 2 - 1));
+        CreateCharacter(GetTileAt(Width / 2 + 1, Height / 2 + 1));
+    }
 
 	public Room GetOutSideRoom(){
 		return rooms [0];
 	}
+
+    public int GetRoomID(Room r) {
+        return rooms.IndexOf(r);
+    }
+
+    public Room GetRoomFromID(int i) {
+        if(i < 0 || i > rooms.Count + 1) {
+            return null;
+        }
+        return rooms[i];
+    }
 
 	public void AddRoom(Room r){
 		rooms.Add (r);
@@ -68,7 +81,7 @@ public class World : IXmlSerializable{
 		tiles = new Tile[Width,Height];
 
 		rooms = new List<Room> ();
-		rooms.Add (new Room (this));
+		rooms.Add (new Room ());
 
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
@@ -103,35 +116,11 @@ public class World : IXmlSerializable{
 	}
 
 	void CreateFurniturePrototypes() {
+        furniturePrototypes = new Dictionary<string, Furniture>();
+        furnitureJobPrototypes = new Dictionary<string, Job>();
 
-		furniturePrototypes = new Dictionary<string, Furniture>();
-		furnitureJobPrototypes = new Dictionary<string, Job>();
-
-		furniturePrototypes.Add("Wall", new Furniture("Wall", 0, 1, 1, true, true));
-		furnitureJobPrototypes.Add("Wall", new Job(null, "Wall", FurnitureActions.JobComplete_Building,
-			1f, new Inventory[]{ new Inventory("Steel Plate", 5, 0)}));
-		
-
-
-		furniturePrototypes.Add("Stock Pile", new Furniture("Stock Pile", 1, 1, 1, false, false));
-		furnitureJobPrototypes.Add("Stock Pile", new Job(null, "Stock Pile", FurnitureActions.JobComplete_Building,-1f, null));
-		furniturePrototypes ["Stock Pile"].RegisterAction (FurnitureActions.StockPile_UpdateAction);
-		furniturePrototypes ["Stock Pile"].tint = new Color32(186, 31, 31, 255);
-
-		furniturePrototypes.Add("Door", new Furniture("Door", 2, 1, 1, false, true));
-		furniturePrototypes["Door"].SetParam("openess", 0);
-		furniturePrototypes["Door"].SetParam("is_opening", 0);
-		furniturePrototypes ["Door"].RegisterAction(FurnitureActions.Door_UpdateAction);
-		furniturePrototypes ["Door"].IsEnterable = FurnitureActions.Door_IsEnterable;
-
-		furniturePrototypes.Add("Oxygen Generator", new Furniture("Oxygen Generator", 10, 2, 2, false, false));
-		furniturePrototypes ["Oxygen Generator"].RegisterAction(FurnitureActions.OxygenGenerator_UpdateAction);
-
-		furniturePrototypes.Add("Mining Drone Station", new Furniture("Mining Drone Station", 1, 3, 3, false, false));
-		furniturePrototypes ["Mining Drone Station"].RegisterAction(FurnitureActions.MiningDroneStation_UpdateAction);
-		furniturePrototypes ["Mining Drone Station"].jobSpotOffset = new Vector2 (1, 0);
-		furniturePrototypes ["Mining Drone Station"].jobSpawnSpot = new Vector2 (0, 0);
-	}
+        FurnitureCreate.CreateFurniturePrototypes(furniturePrototypes, furnitureJobPrototypes);
+    }
 
 	public void RandomizeTiles() {
 		
@@ -268,7 +257,20 @@ public class World : IXmlSerializable{
 		writer.WriteAttributeString ("Width", Width.ToString());
 		writer.WriteAttributeString ("Height", Height.ToString());
 
-		writer.WriteStartElement ("Tiles");
+        writer.WriteStartElement("Rooms");
+        foreach (Room r in rooms) {
+
+            if(GetOutSideRoom() == r) {
+                continue;
+            }
+
+            writer.WriteStartElement("Room");
+            r.WriteXml(writer);
+            writer.WriteEndElement();
+        }
+        writer.WriteEndElement();
+
+        writer.WriteStartElement ("Tiles");
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
 				writer.WriteStartElement ("Tile");
@@ -276,17 +278,17 @@ public class World : IXmlSerializable{
 				writer.WriteEndElement ();
 			}
 		}
+        writer.WriteEndElement ();
 
-		writer.WriteEndElement ();
-		writer.WriteStartElement ("Furnitures");
-		foreach (Furniture furn in furniture) {
-			writer.WriteStartElement ("Furniture");
-			furn.WriteXml (writer);
-			writer.WriteEndElement ();
-		}
-		writer.WriteEndElement ();
+        writer.WriteStartElement("Furnitures");
+        foreach (Furniture furn in furniture) {
+            writer.WriteStartElement("Furniture");
+            furn.WriteXml(writer);
+            writer.WriteEndElement();
+        }
+        writer.WriteEndElement();
 
-		writer.WriteStartElement ("Characters");
+        writer.WriteStartElement ("Characters");
 		foreach (Character chr in characters) {
 			writer.WriteStartElement ("Character");
 			chr.WriteXml (writer);
@@ -304,15 +306,18 @@ public class World : IXmlSerializable{
 
 		while (reader.Read()) {
 			switch (reader.Name) {
-			case "Tiles":
-				ReadXmlTiles (reader);
-				break;
-			case "Furnitures":
-				ReadXmlFurnitures (reader);
-				break;
-			case "Characters":
-				ReadXmlCharacters (reader);
-				break;
+                case "Rooms":
+                    ReadXmlRooms(reader);
+                    break;
+                case "Tiles":
+				    ReadXmlTiles (reader);
+				    break;
+			    case "Furnitures":
+				    ReadXmlFurnitures (reader);
+				    break;
+			    case "Characters":
+				    ReadXmlCharacters (reader);
+				    break;
 			}
 
 		}
@@ -355,21 +360,36 @@ public class World : IXmlSerializable{
 		}
 	}
 
-	void ReadXmlFurnitures(XmlReader reader){
-		if (reader.ReadToDescendant ("Furniture")) {
-			do {
-				int x = int.Parse(reader.GetAttribute("X"));
-				int y = int.Parse(reader.GetAttribute("Y"));
-				Furniture furn = PlaceFurniture(reader.GetAttribute("ObjectType"), tiles [x, y], false);
-				furn.ReadXml (reader);
-			} while(reader.ReadToNextSibling ("Furniture"));
-			foreach (Furniture furn in furniture) {
-				Room.DoRoomFloodFill (furn.tile, true);
-			}
-		}
-	}
+    void ReadXmlFurnitures(XmlReader reader) {
+        if (reader.ReadToDescendant("Furniture")) {
+            do {
+                int x = int.Parse(reader.GetAttribute("X"));
+                int y = int.Parse(reader.GetAttribute("Y"));
+                Furniture furn = PlaceFurniture(reader.GetAttribute("ObjectType"), tiles[x, y], false);
+                furn.ReadXml(reader);
+            } while (reader.ReadToNextSibling("Furniture"));
 
-	void ReadXmlCharacters(XmlReader reader){
+            /*foreach (Furniture furn in furniture) {
+				Room.DoRoomFloodFill (furn.tile, true);
+			}*/
+        }
+    }
+
+    void ReadXmlRooms(XmlReader reader) {
+        if (reader.ReadToDescendant("Room")) {
+            do {
+                Room r = new Room();
+                rooms.Add(r);
+                r.ReadXml(reader);
+            } while (reader.ReadToNextSibling("Room"));
+
+            /*foreach (Furniture furn in furniture) {
+				Room.DoRoomFloodFill (furn.tile, true);
+			}*/
+        }
+    }
+
+    void ReadXmlCharacters(XmlReader reader){
 		if (reader.ReadToDescendant ("Character")) {
 			do {
 				int x = int.Parse(reader.GetAttribute("X"));

@@ -59,6 +59,7 @@
      <Compile Include="Assets\Script\Models\Character.cs" />
      <Compile Include="Assets\Script\Models\Furniture.cs" />
      <Compile Include="Assets\Script\Models\FurnitureActions.cs" />
+     <Compile Include="Assets\Script\Models\FurnitureCreate.cs" />
      <Compile Include="Assets\Script\Models\Inventory.cs" />
      <Compile Include="Assets\Script\Models\InventoryManager.cs" />
      <Compile Include="Assets\Script\Models\Job.cs" />
@@ -88,6 +89,7 @@
      <Compile Include="Assets\Script\Utilies\Priority Queue\StablePriorityQueueNode.cs" />
      <Compile Include="Assets\Script\Utilies\SetSortingLayer.cs" />
      <Compile Include="Assets\Script\Utilies\SimplePool.cs" />
+     <None Include="Assets\Data\Furniture.xml" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

@@ -1,20 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
+using System.Xml.Serialization;
+using System.Xml.Schema;
 
-public class Room {
+public class Room : IXmlSerializable {
 
 	Dictionary<string, float> atmosGases;
 
 	List<Tile> tiles;
 
-	World world;
-
-	public Room(World world) {
-		this.world = world;
+	public Room() {
 		tiles = new List<Tile>();
 		atmosGases = new Dictionary<string, float> ();
 	}
+
+    public int ID {
+        get {
+            return World.currentWorld.GetRoomID(this);
+        }
+    }
 
 	public void AssignTile( Tile t ) {
 		if(tiles.Contains(t)) {
@@ -39,7 +45,7 @@ public class Room {
 	}
 
 	public bool IsOutsideRoom(){
-		return this == world.GetOutSideRoom ();
+		return this == World.currentWorld.GetOutSideRoom ();
 	}
 
 	public void ChangeGas(string type, float amount){
@@ -154,7 +160,7 @@ public class Room {
 
 		// If we get to this point, then we know that we need to create a new room.
 
-		Room newRoom = new Room(World.currentWorld);
+		Room newRoom = new Room();
 		Queue<Tile> tilesToCheck = new Queue<Tile>();
 		tilesToCheck.Enqueue(tile);
 
@@ -213,5 +219,42 @@ public class Room {
 			this.atmosGases [n] = other.atmosGases [n];
 		}
 	}
+
+    /*
+	 * 
+	 * 
+	 * SAVE AND LOADING
+	 * 
+	 * 
+	 * 
+	 */
+
+    public XmlSchema GetSchema() {
+        return null;
+    }
+
+    public void WriteXml(XmlWriter writer) {
+
+
+        foreach (string s in atmosGases.Keys) {
+            writer.WriteStartElement("Param");
+            writer.WriteAttributeString("Name", s);
+            writer.WriteAttributeString("value", atmosGases[s].ToString());
+            writer.WriteEndElement();
+        }
+    }
+
+    public void ReadXml(XmlReader reader) {
+        //movementCost = int.Parse(reader.GetAttribute ("MovementCost"));
+
+
+        if (reader.ReadToDescendant("Param")) {
+            do {
+                string s = reader.GetAttribute("Name");
+                float v = float.Parse(reader.GetAttribute("value"));
+                atmosGases[s] = v;
+            } while (reader.ReadToNextSibling("Param"));
+        }
+    }
 
 }

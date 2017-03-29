@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114533338877052196}
   - component: {fileID: 114760285549870236}
   m_Layer: 5
-  m_Name: Button - Build Door
+  m_Name: Button - Build Furniture
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

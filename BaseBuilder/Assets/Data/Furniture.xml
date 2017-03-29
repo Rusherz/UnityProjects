@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Furnitures>
+	<Furniture objectType="Wall">
+		<MovementCost>0</MovementCost>
+		<Width>1</Width>
+		<Height>1</Height>
+		<LinksToNeighbours>True</LinksToNeighbours>
+		<EnclosesRooms>True</EnclosesRooms>
+
+		<BuildingJob>
+			<Inventory objectType="Steel Plate" amount="5">
+		</BuildingJob>
+
+		<DeconstructJob>
+			<Inventory objectType="Steel Plate" amount="3">
+		</DeconstructJob>
+
+	</Furniture>
+	<Furniture objectType="Door">
+		<MovementCost>1</MovementCost>
+		<Width>1</Width>
+		<Height>1</Height>
+		<LinksToNeighbours>False</LinksToNeighbours>
+		<EnclosesRooms>True</EnclosesRooms>
+		<Params>
+			<Param name="openness" value="0">
+		</Params>
+	</Furniture>
+</Furnitures>

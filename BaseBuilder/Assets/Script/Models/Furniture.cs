@@ -45,6 +45,7 @@ public class Furniture : IXmlSerializable{
 	public void RegisterAction(Action<Furniture, float> a){
 		updateActions += a;
 	}
+
 	public void UnregisterAction(Action<Furniture, float> a){
 		updateActions -= a;
 	}
@@ -309,4 +310,5 @@ public class Furniture : IXmlSerializable{
 			}while(reader.ReadToNextSibling("Param"));
 		}
 	}
+
 }

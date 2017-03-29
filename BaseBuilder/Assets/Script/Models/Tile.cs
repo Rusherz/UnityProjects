@@ -187,11 +187,15 @@ public class Tile : IXmlSerializable{
 
 	public void WriteXml(XmlWriter writer){
 		writer.WriteAttributeString ("X", X.ToString ());
-		writer.WriteAttributeString ("Y", Y.ToString ());
-		writer.WriteAttributeString ("Type", ((int)Type).ToString());
+        writer.WriteAttributeString ("Y", Y.ToString());
+        writer.WriteAttributeString ("RoomID", room==null ? "-1" : room.ID.ToString());
+        writer.WriteAttributeString ("Type", ((int)Type).ToString());
 	}
 
 	public void ReadXml(XmlReader reader){
+
+        room = World.currentWorld.GetRoomFromID(int.Parse(reader.GetAttribute("RoomID")));
+
 		Type = (TileType)int.Parse(reader.GetAttribute("Type"));
 	}
 
