@@ -46,17 +46,18 @@ public class Path_TileGraph {
 	}
 
 	bool IsClippingCorner(Tile cur, Tile neigh){
-		int dx = cur.X - neigh.X;
+		/*int dx = cur.X - neigh.X;
 		int dy = cur.Y - neigh.Y;
 		if (Mathf.Abs(dx) + Mathf.Abs(dy) == 2) {
-
 			if(World.currentWorld.GetTileAt(cur.X - dx, cur.Y).movementCost == 0){
+				Debug.Log (World.currentWorld.GetTileAt (cur.X - dx, cur.Y).Type.ToString());
 				return true;
 			}
 			if(World.currentWorld.GetTileAt(cur.X, cur.Y - dx).movementCost == 0){
+				Debug.Log (World.currentWorld.GetTileAt (cur.X, cur.Y - dx).Type.ToString());
 				return true;
 			}
-		}
+		}*/
 
 		return false;
 	}

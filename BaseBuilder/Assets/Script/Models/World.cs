@@ -4,6 +4,7 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Schema;
+using ProceduralToolkit.Examples;
 
 public class World : IXmlSerializable{
 
@@ -35,8 +36,8 @@ public class World : IXmlSerializable{
 	public World(int width, int height) {
 		SetUpWorld (width, height);
 
-        CreateCharacter(GetTileAt(Width / 2, Height / 2));
-        CreateCharacter(GetTileAt(Width / 2 - 1, Height / 2 - 1));
+        //CreateCharacter(GetTileAt(Width / 2, Height / 2));
+        //CreateCharacter(GetTileAt(Width / 2 - 1, Height / 2 - 1));
         CreateCharacter(GetTileAt(Width / 2 + 1, Height / 2 + 1));
     }
 
@@ -95,6 +96,49 @@ public class World : IXmlSerializable{
 		characters = new List<Character> ();
 		furniture = new List<Furniture> ();
 		inventoryManager = new InventoryManager ();
+		GameObject.FindObjectOfType<SpriteController> ().LoadSprites ();
+	}
+
+	public CellularAutomaton.Config config = new CellularAutomaton.Config();
+	public void PlaceObjectsAroundMap(){
+
+		config.width = Width;
+		config.height = Height;
+		config.aliveBorders = true;
+		config.ruleset = Ruleset.majority;
+		config.startNoise = 0.4f;
+
+		CellularAutomaton cell = new CellularAutomaton (config);
+		cell.Simulate ("Stone");
+
+		config.startNoise = 0.2f;
+		cell.config = config;
+		cell.Simulate ("Steel");
+		config.startNoise = 0.5f;
+		cell.config = config;
+		cell.Simulate ("Tree");
+
+		/*DTileMap map = new DTileMap (Width, Height);
+		Tile t;
+		int x = UnityEngine.Random.Range (20, 80);
+		for (int i = 0; i < x; i++) {
+			t = GetTileAt (UnityEngine.Random.Range (1, Width - 1), UnityEngine.Random.Range (1, Height - 1));
+
+			PlaceFurniture ("Tree", t, false);
+		}
+		/*x = UnityEngine.Random.Range (20, 80);
+		for (int i = 0; i < x; i++) {
+			t = GetTileAt (UnityEngine.Random.Range (1, Width - 1), UnityEngine.Random.Range (1, Height - 1));
+
+			PlaceFurniture ("Stone", t, false);
+		}
+		x = UnityEngine.Random.Range (20, 80);
+		for (int i = 0; i < x; i++) {
+			t = GetTileAt (UnityEngine.Random.Range (1, Width - 1), UnityEngine.Random.Range (1, Height - 1));
+
+			PlaceFurniture ("Steel", t, false);
+		}*/
+
 	}
 
 	public void Update(float deltaTime){
@@ -164,9 +208,9 @@ public class World : IXmlSerializable{
 
 		furniture.Add (furn);
 
-		if (doRoomFloodFill && furn.roomEnclosure) {
+		/*if (doRoomFloodFill && furn.roomEnclosure) {
 			Room.DoRoomFloodFill (furn.tile);
-		}
+		}*/
 
 		if(cbFurnitureCreated != null) {
 			cbFurnitureCreated(furn);

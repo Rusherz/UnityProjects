@@ -7,9 +7,12 @@ public class FurnitureCreate {
     public static void CreateFurniturePrototypes(Dictionary<string, Furniture> furniturePrototypes, Dictionary<string, Job> furnitureJobPrototypes) {
         CreateWallProtoType(furniturePrototypes, furnitureJobPrototypes);
         CreateDoorPrototype(furniturePrototypes, furnitureJobPrototypes);
-        CreateStockPilePrototype(furniturePrototypes, furnitureJobPrototypes);
+        //CreateStockPilePrototype(furniturePrototypes, furnitureJobPrototypes);
         CreateOxygenPrototype(furniturePrototypes, furnitureJobPrototypes);
         CreateMiningDroneStation(furniturePrototypes, furnitureJobPrototypes);
+		CreateTree (furniturePrototypes, furnitureJobPrototypes);
+		CreateStone(furniturePrototypes, furnitureJobPrototypes);
+		CreateSteel(furniturePrototypes, furnitureJobPrototypes);
     }
 
     static void CreateWallProtoType(Dictionary<string, Furniture> furniturePrototypes, Dictionary<string, Job> furnitureJobPrototypes) {
@@ -27,7 +30,7 @@ public class FurnitureCreate {
     }
 
     static void CreateStockPilePrototype(Dictionary<string, Furniture> furniturePrototypes, Dictionary<string, Job> furnitureJobPrototypes) {
-        furniturePrototypes.Add("Stock Pile", new Furniture("Stock Pile", 1, 1, 1, false, false));
+        furniturePrototypes.Add("Stock Pile", new Furniture("Stock Pile", 1, 1, 1, true, false));
         furnitureJobPrototypes.Add("Stock Pile", new Job(null, "Stock Pile", FurnitureActions.JobComplete_Building, -1f, null));
         furniturePrototypes["Stock Pile"].RegisterAction(FurnitureActions.StockPile_UpdateAction);
         furniturePrototypes["Stock Pile"].tint = new Color32(186, 31, 31, 255);
@@ -44,5 +47,31 @@ public class FurnitureCreate {
         furniturePrototypes["Mining Drone Station"].jobSpotOffset = new Vector2(1, 0);
         furniturePrototypes["Mining Drone Station"].jobSpawnSpot = new Vector2(0, 0);
     }
+
+	#region World Objects
+	static void CreateTree(Dictionary<string, Furniture> furniturePrototypes, Dictionary<string, Job> furnitureJobPrototypes){
+		furniturePrototypes.Add("Tree", new Furniture("Tree", 1, 1, 2, false, false, 1));
+		furniturePrototypes ["Tree"].RegisterDeconstruct (FurnitureActions.Tree_UpdateAction);
+		furniturePrototypes["Tree"].jobSpotOffset = new Vector2(0, -1);
+		furniturePrototypes["Tree"].jobSpawnSpot = new Vector2(0, 0);
+
+	}
+
+	static void CreateStone(Dictionary<string, Furniture> furniturePrototypes, Dictionary<string, Job> furnitureJobPrototypes){
+		furniturePrototypes.Add("Stone", new Furniture("Stone", 1, 1, 1, false, false, 1));
+		furniturePrototypes ["Stone"].RegisterDeconstruct (FurnitureActions.Stone_UpdateAction);
+		furniturePrototypes["Stone"].jobSpotOffset = new Vector2(0, -1);
+		furniturePrototypes["Stone"].jobSpawnSpot = new Vector2(0, 0);
+
+	}
+
+	static void CreateSteel(Dictionary<string, Furniture> furniturePrototypes, Dictionary<string, Job> furnitureJobPrototypes){
+		furniturePrototypes.Add("Steel", new Furniture("Steel", 1, 1, 1, false, false, 1));
+		furniturePrototypes ["Steel"].RegisterDeconstruct (FurnitureActions.Steel_UpdateAction);
+		furniturePrototypes["Steel"].jobSpotOffset = new Vector2(0, -1);
+		furniturePrototypes["Steel"].jobSpawnSpot = new Vector2(0, 0);
+
+	}
+	#endregion
 
 }

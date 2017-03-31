@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Schema;
 
-public class Character : IXmlSerializable {
+public class Character : IXmlSerializable, ISelectableInterface {
 	public float X {
 		get {
 			if (nextTile == null)
@@ -72,7 +72,6 @@ public class Character : IXmlSerializable {
 			return;
 		}
 		destTile = myJob.tile;
-		myJob.RegisterJobCompletedCallBack(OnJobStopped);
 		myJob.RegisterJobStoppedCallBack(OnJobStopped);
 
 		pathAStart = new Path_AStar (World.currentWorld, currTile, destTile);
@@ -80,14 +79,14 @@ public class Character : IXmlSerializable {
 			Debug.LogError ("Path to dest does not exist.");
 			AbandonJob ();
 			destTile = currTile;
-			return;
 		}
 	}
 
-	void Update_DoJob(float deltaTime){
-		if(myJob == null) {
+	void Update_DoJob(float deltaTime) {
+        jobSearchCooldown -= deltaTime;
+        if (myJob == null) {
+			//Debug.Log ("I dont have a job");
 			// Grab a new job.
-			jobSearchCooldown -= deltaTime;
 			if (jobSearchCooldown > 0) {
 				return;
 			}
@@ -272,7 +271,19 @@ public class Character : IXmlSerializable {
 		myJob = null;
 	}
 
-	/*
+    public string GetName() {
+        return "Sally";
+    }
+
+    public string GetDescription() {
+        return "This is an alien.";
+    }
+
+    public string GetHitPoints() {
+        return "100/100";
+    }
+
+    /*
 	 * 
 	 * 
 	 * SAVE AND LOADING
@@ -280,7 +291,7 @@ public class Character : IXmlSerializable {
 	 * 
 	 * 
 	 */
-	public Character(){
+    public Character(){
 
 	}
 
@@ -298,4 +309,5 @@ public class Character : IXmlSerializable {
 
 
 	}
+
 }

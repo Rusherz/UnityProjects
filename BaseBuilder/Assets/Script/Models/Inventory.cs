@@ -5,7 +5,7 @@ using System.Collections;
 // LooseObjects are things that are lying on the floor/stockpile, like a bunch of metal bars
 // or potentially a non-installed copy of furniture (e.g. a cabinet still in the box from Ikea)
 
-public class Inventory {
+public class Inventory : ISelectableInterface {
 	public string objectType = "Steel Plate";
 	public int maxStackSize = 50;
 	protected int _stackSize;
@@ -53,4 +53,15 @@ public class Inventory {
 		cmInventoryChanged -= callback;
 	}
 
+    public string GetName() {
+        return this.objectType;
+    }
+
+    public string GetDescription() {
+        return "This is a stack of " + this.objectType + "s.";
+    }
+
+    public string GetHitPoints() {
+        return "N/A";
+    }
 }

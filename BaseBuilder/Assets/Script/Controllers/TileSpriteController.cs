@@ -5,9 +5,7 @@ using System.Collections.Generic;
 
 public class TileSpriteController : MonoBehaviour {
 
-	public Sprite floorSprite;	// FIXME!
-	public Sprite emptySprite;	// FIXME!
-
+	SpriteController spriteController;
 	Dictionary<Tile, GameObject> tileGameObjectMap;
 
 	World world{
@@ -16,7 +14,9 @@ public class TileSpriteController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+
+		spriteController = GameObject.FindObjectOfType<SpriteController> ();
+
 		tileGameObjectMap = new Dictionary<Tile, GameObject>();
 
 		world.RegisterTileChanged( OnTileChanged );
@@ -33,12 +33,12 @@ public class TileSpriteController : MonoBehaviour {
 				tile_go.transform.position = new Vector3( tile_data.X, tile_data.Y, 0);
 				tile_go.transform.SetParent(this.transform, true);
 
-				tile_go.AddComponent<SpriteRenderer>().sprite = emptySprite;
+				tile_go.AddComponent<SpriteRenderer>().sprite = spriteController.Sprites[tile_data.Type.ToString()];
 				OnTileChanged (tile_data);
 
 			}
 		}
-
+		World.currentWorld.PlaceObjectsAroundMap ();
 	}
 
 	void DestroyAllTileGameObjects() {
@@ -70,16 +70,7 @@ public class TileSpriteController : MonoBehaviour {
 			return;
 		}
 
-		if(tile_data.Type == TileType.Floor) {
-			tile_go.GetComponent<SpriteRenderer>().sprite = floorSprite;
-		}
-		else if( tile_data.Type == TileType.Empty ) {
-			tile_go.GetComponent<SpriteRenderer>().sprite = emptySprite;
-		}
-		else {
-			Debug.LogError("OnTileTypeChanged - Unrecognized tile type.");
-		}
-
+		tile_go.GetComponent<SpriteRenderer>().sprite = spriteController.Sprites[tile_data.Type.ToString()];
 
 	}
 

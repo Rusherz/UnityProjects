@@ -32,7 +32,7 @@ public class CharacterSpriteController : MonoBehaviour {
 	}
 
 	public void OnCharacterCreated( Character c ) {
-		Debug.Log("OnCharacterCreated");
+		//Debug.Log("OnCharacterCreated");
 
 		GameObject char_go = new GameObject();
 

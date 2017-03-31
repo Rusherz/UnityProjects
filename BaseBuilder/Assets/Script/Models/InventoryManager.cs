@@ -104,7 +104,7 @@ public class InventoryManager {
 
 	public Path_AStar GetPathToInventoryOfType(string type, Tile t, int amount, bool canTakeFromStockPile){
 		if (!inventory.ContainsKey (type)) {
-			Debug.LogError ("Trying to add inventory to a job that it doesnt want.");
+			Debug.LogError ("Trying to add inventory to a job that it doesnt want. Type: " + type);
 			return null;
 		}
 

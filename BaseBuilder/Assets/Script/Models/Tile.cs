@@ -6,11 +6,11 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Schema;
 
-public enum TileType { Empty, Floor };
+public enum TileType { Dirt, Empty, Floor };
 public enum Enterability { Yes, Never, Soon };
 
-public class Tile : IXmlSerializable{
-	private TileType _type = TileType.Empty;
+public class Tile : IXmlSerializable, ISelectableInterface {
+	private TileType _type = TileType.Dirt;
 	public TileType Type {
 		get { return _type; }
 		set {
@@ -99,6 +99,7 @@ public class Tile : IXmlSerializable{
 				t.furniture = objInstance;
 			}
 		}
+		//Debug.Log ("Placed is true");
 		return true;
 	}
 
@@ -185,7 +186,23 @@ public class Tile : IXmlSerializable{
 		return World.currentWorld.GetTileAt (X + 1, Y);
 	}
 
-	public XmlSchema GetSchema(){
+    public string GetName() {
+        return this.Type.ToString();
+    }
+
+    public string GetDescription() {
+        if (this.Type == TileType.Floor) {
+            return "This is a floor.";
+        } else {
+            return "This is void.";
+        }
+    }
+
+    public string GetHitPoints() {
+        return "N/A";
+    }
+
+    public XmlSchema GetSchema(){
 		return null;
 	}
 

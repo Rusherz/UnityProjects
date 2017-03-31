@@ -100,23 +100,25 @@ public class Job {
 			}
 			return;
 		}
-
 		jobTime -= workTime;
 
 		if (cbJobWorked != null) {
 			cbJobWorked (this);
 		}
 
-		if(jobTime <= 0){
-			if(cbJobCompleted != null){
+		if(jobTime <= 0) {
+			// Do whatever is supposed to happen with a job cycle completes.
+			if(cbJobCompleted != null)
 				cbJobCompleted(this);
+
+			if(jobrepeats == false) {
+				// Let everyone know that the job is officially concluded
+				if(cbJobStopped != null)
+					cbJobStopped(this);
 			}
-			if (!jobrepeats) {
-				if (cbJobStopped != null) {
-					cbJobStopped (this);
-				} else {
-					jobTime += jobTimeRequired;
-				}
+			else {
+				// This is a repeating job and must be reset.
+				jobTime += jobTimeRequired;
 			}
 		}
 	}

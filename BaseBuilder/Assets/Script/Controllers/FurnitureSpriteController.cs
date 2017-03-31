@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public class FurnitureSpriteController : MonoBehaviour {
 
 	Dictionary<Furniture, GameObject> furnitureGameObjectMap;
-	Dictionary<string, Sprite> furnitureSprites;
+	//Dictionary<string, Sprite> furnitureSprites;
+	SpriteController spriteController;
 
 	World world{
 		get { return WorldController.Instance.world; }
@@ -15,16 +16,17 @@ public class FurnitureSpriteController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		LoadSprites();
+		spriteController = GameObject.FindObjectOfType<SpriteController> ();
 		furnitureGameObjectMap = new Dictionary<Furniture, GameObject>();
 
 		world.RegisterFurnitureCreated(OnFurnitureCreated);
 		foreach (Furniture furn in world.furniture) {
 			OnFurnitureCreated (furn);
 		}
+
 	}
 
-	void LoadSprites() {
+	/*void LoadSprites() {
 		furnitureSprites = new Dictionary<string, Sprite>();
 		Sprite[] sprites = Resources.LoadAll<Sprite>("Images/Objects/");
 
@@ -33,7 +35,7 @@ public class FurnitureSpriteController : MonoBehaviour {
 			//Debug.Log(s);
 			furnitureSprites[s.name] = s;
 		}
-	}
+	}*/
 
 	public void OnFurnitureCreated( Furniture furn ) {
 		GameObject furn_go = new GameObject();
@@ -56,6 +58,7 @@ public class FurnitureSpriteController : MonoBehaviour {
 
 		SpriteRenderer sr = furn_go.AddComponent<SpriteRenderer> ();
 		sr.sprite = GetSpriteForFurniture(furn);
+		//Debug.Log (sr.sprite.ToString () + "  " + furn.objectType);
 		sr.sortingLayerName = "InstalledObject";
 		sr.color = furn.tint;
 		furn.RegisterOnChangedCallback( OnFurnitureChanged );
@@ -98,16 +101,15 @@ public class FurnitureSpriteController : MonoBehaviour {
 				if (furn.GetParam("openess") < 0.1f) {
 					spriteName = "Door";
 				} else if (furn.GetParam("openess") < 0.5f){
-					spriteName = "Door_1";
+					spriteName = "Door2";
 				} else if (furn.GetParam("openess") < 0.9f){
-					spriteName = "Door_2";
+					spriteName = "Door3";
 				} else{
-					spriteName = "Door_3";
+					spriteName = "Door4";
 				}
 			}
-			return furnitureSprites[spriteName];
+			return spriteController.Sprites[spriteName];
 		}
-
 
 		spriteName = furn.objectType + "_";
 		int x = furn.tile.X;
@@ -127,27 +129,27 @@ public class FurnitureSpriteController : MonoBehaviour {
 		if(t != null && t.furniture != null && t.furniture.objectType == furn.objectType) {
 			spriteName += "S";
 		}
-		t = world.GetTileAt(x-1, y);
-		if(t != null && t.furniture != null && t.furniture.objectType == furn.objectType) {
-			spriteName += "W";
-		}
+        t = world.GetTileAt(x - 1, y);
+        if (t != null && t.furniture != null && t.furniture.objectType == furn.objectType) {
+            spriteName += "W";
+        }
 
-		if(furnitureSprites.ContainsKey(spriteName) == false) {
+		if (spriteController.Sprites.ContainsKey(spriteName) == false) {
 			Debug.LogError("GetSpriteForInstalledObject -- No sprites with name: " + spriteName);
 			return null;
 		}
 
-		return furnitureSprites[spriteName];
+		return spriteController.Sprites[spriteName];
 
 	}
 
 	public Sprite GetSpriteForFurniture(string objType){
-		if (furnitureSprites.ContainsKey (objType)) {
-			return furnitureSprites[objType];
+		if (spriteController.Sprites.ContainsKey (objType)) {
+			return spriteController.Sprites[objType];
 		}
 
-		if (furnitureSprites.ContainsKey (objType + "_")) {
-			return furnitureSprites[objType + "_"];
+		if (spriteController.Sprites.ContainsKey (objType + "_")) {
+			return spriteController.Sprites[objType + "_"];
 		}
 
 		Debug.LogError ("No type for object " + objType);

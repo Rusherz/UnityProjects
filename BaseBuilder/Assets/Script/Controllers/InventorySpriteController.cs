@@ -33,7 +33,7 @@ public class InventorySpriteController : MonoBehaviour {
 
 		foreach(Sprite s in sprites) {
 			inventorySprites[s.name] = s;
-			Debug.Log (s);
+			//Debug.Log (s);
 		}
 	}
 

@@ -61,11 +61,11 @@ public class MouseController : MonoBehaviour {
 
 	public class SelectionInfo{
 		public Tile tile;
-		public object[] objectArray;
+		public ISelectableInterface[] objectArray;
 		public int subSelection = 0;
 	}
 
-	SelectionInfo mySelection;
+	public SelectionInfo mySelection;
 
 	void UpdateSelection(){
 
@@ -110,7 +110,7 @@ public class MouseController : MonoBehaviour {
 	}
 
 	void RebuildSelectionInfo(){
-		mySelection.objectArray = new object[mySelection.tile.characters.Count + 3];
+		mySelection.objectArray = new ISelectableInterface[mySelection.tile.characters.Count + 3];
 		for (int i = 0; i < mySelection.tile.characters.Count; i++) {
 			mySelection.objectArray [i] = mySelection.tile.characters [i];
 		}

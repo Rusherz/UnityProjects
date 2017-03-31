@@ -6,7 +6,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Schema;
 
-public class Furniture : IXmlSerializable{
+public class Furniture : IXmlSerializable, ISelectableInterface {
 
 	public List<Job> jobs;
 	protected Dictionary<string, float> furnParam;
@@ -60,6 +60,8 @@ public class Furniture : IXmlSerializable{
 
 	public float movementCost{ get; protected set; }
 
+	public float deconstructTime{ get; protected set; }
+
 	public bool roomEnclosure{ get; protected set; }
 
 	public Color32 tint = Color.white;
@@ -73,6 +75,7 @@ public class Furniture : IXmlSerializable{
 
 	public Action<Furniture> cbOnChanged;
 	public Action<Furniture> cbOnRemoved;
+	public Action<Furniture, float> cbDeconstruct;
 
 	Func<Tile, bool> funcPositionValidation;
 
@@ -91,6 +94,7 @@ public class Furniture : IXmlSerializable{
         this.height = other.height;
 		this.tint = other.tint;
 		this.linksToNeighbour = other.linksToNeighbour;
+		this.deconstructTime = other.deconstructTime;
 
 		this.jobSpotOffset = other.jobSpotOffset;
 		this.jobSpawnSpot = other.jobSpawnSpot;
@@ -105,6 +109,9 @@ public class Furniture : IXmlSerializable{
 		if (other.funcPositionValidation != null) {
 			this.funcPositionValidation = (Func<Tile, bool>)other.funcPositionValidation.Clone ();
 		}
+		if (other.cbDeconstruct != null) {
+			this.cbDeconstruct = (Action<Furniture, float>)other.cbDeconstruct.Clone ();
+		}
 		this.IsEnterable = other.IsEnterable;
     }
 
@@ -112,13 +119,15 @@ public class Furniture : IXmlSerializable{
 		return new Furniture(this);
 	}
 
-	public Furniture( string objectType, float movementCost = 1f, int width=1, int height=1, bool linksToNeighbour=false, bool roomEnclosure = false) {
+	public Furniture( string objectType, float movementCost = 1f, int width=1, int height=1, bool linksToNeighbour=false, bool roomEnclosure = false, float deconstructTime=1) {
         this.objectType = objectType;
         this.movementCost = movementCost;
 		this.roomEnclosure = roomEnclosure;
         this.width = width;
         this.height = height;
         this.linksToNeighbour = linksToNeighbour;
+		this.deconstructTime = deconstructTime;
+
 		this.furnParam = new Dictionary<string, float>();
 
         this.funcPositionValidation = this.IsValidPosition;
@@ -134,6 +143,7 @@ public class Furniture : IXmlSerializable{
         obj.tile = tile;
 
         if ( tile.PlaceFurniture(obj) == false ) {
+			Debug.Log ("PlaceFurniture returned false");
 			return null;
 		}
 
@@ -181,6 +191,14 @@ public class Furniture : IXmlSerializable{
 		cbOnRemoved -= callbackFunc;
 	}
 
+	public void RegisterDeconstruct(Action<Furniture, float> a) {
+		cbDeconstruct += a;
+	}
+
+	public void UnregisterDeconstruct(Action<Furniture, float> a) {
+		cbDeconstruct -= a;
+	}
+
 	public bool IsValidPlacement(Tile t){
 		return funcPositionValidation (t);
 	}
@@ -189,7 +207,7 @@ public class Furniture : IXmlSerializable{
 		for (int x_off = t.X; x_off < (t.X + width); x_off++) {
 			for (int y_off = t.Y; y_off < (t.Y + height); y_off++) {
 				Tile t2 = World.currentWorld.GetTileAt (x_off, y_off);
-				if( t2.Type != TileType.Floor ) {
+				if( t2.Type == TileType.Empty ) {
 					return false;
 				}
 
@@ -248,6 +266,12 @@ public class Furniture : IXmlSerializable{
 	}
 
 	public void Deconstruct(){
+
+		if (cbDeconstruct != null) {
+			cbDeconstruct (this, deconstructTime);
+			return;
+		}
+
 		Debug.Log ("Deconstructing");
 		tile.UnplaceFurniture ();
 
@@ -257,9 +281,9 @@ public class Furniture : IXmlSerializable{
 			cbOnRemoved (this);
 		}
 
-		if (roomEnclosure) {
+		/*if (roomEnclosure) {
 			Room.DoRoomFloodFill (this.tile);
-		}
+		}*/
 
 		World.currentWorld.InvalidateTileGraph ();
 
@@ -273,8 +297,19 @@ public class Furniture : IXmlSerializable{
 		return World.currentWorld.GetTileAt (tile.X + (int)jobSpawnSpot.x, tile.Y + (int)jobSpawnSpot.y); 
 	}
 
+    public string GetName() {
+        return this.objectType;
+    }
 
-	/*
+    public string GetDescription() {
+        return "This is a piece of furniture.";
+    }
+
+    public string GetHitPoints() {
+        return "N/A";
+    }
+
+    /*
 	 * 
 	 * 
 	 * SAVE AND LOADING
@@ -283,7 +318,7 @@ public class Furniture : IXmlSerializable{
 	 * 
 	 */
 
-	public XmlSchema GetSchema(){
+    public XmlSchema GetSchema(){
 		return null;
 	}
 

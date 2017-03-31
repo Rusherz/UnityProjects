@@ -36,7 +36,9 @@ public static class FurnitureActions {
 	}
 
 	public static Inventory[] GetItemsFromFilter(){
-		return new Inventory[1] { new Inventory ("Steel Plate", 50, 0) };
+		return new Inventory[] { new Inventory ("Steel Plate", 50, 0), 
+			new Inventory ("Stone Clump", 50, 0), 
+			new Inventory ("Wood Plank", 50, 0)  };
 	}
 
 	public static void StockPile_UpdateAction(Furniture furn, float deltaTime){
@@ -129,5 +131,83 @@ public static class FurnitureActions {
 		World.currentWorld.inventoryManager.PlaceInventory (j.furniture.GetSpawnSpotTile(), new Inventory ("Steel Plate", 50, 20));
 
 	}
-	
+
+	public static void Tree_UpdateAction(Furniture furn, float deltaTime){
+		Tile spawnSpot = furn.GetSpawnSpotTile ();
+		if (furn.JobCount () > 0) {
+			if (spawnSpot.inventory != null && spawnSpot.inventory.stackSize >= spawnSpot.inventory.maxStackSize) {
+				furn.CancelJob ();
+			}
+			return;
+		}
+		if (spawnSpot.inventory != null && spawnSpot.inventory.stackSize >= spawnSpot.inventory.maxStackSize) {
+			return;
+		}
+		Tile jobSpot = furn.JobSpotOffset ();
+		if (jobSpot.inventory != null && (jobSpot.inventory.stackSize >= jobSpot.inventory.maxStackSize)) {
+			return;
+		}
+		Job j = new Job (jobSpot, null, Tree_JobComplete, 1f, null, false);
+		furn.AddJob (j);
+	}
+
+	public static void Tree_JobComplete(Job j){
+		World.currentWorld.inventoryManager.PlaceInventory(j.furniture.GetSpawnSpotTile(), new Inventory("Wood Plank", 64, Random.Range(1, 20)));
+		j.furniture.UnregisterDeconstruct (Tree_UpdateAction);
+		j.furniture.Deconstruct ();
+
+	}
+
+	public static void Stone_UpdateAction(Furniture furn, float deltaTime){
+		Tile spawnSpot = furn.GetSpawnSpotTile ();
+		if (furn.JobCount () > 0) {
+			if (spawnSpot.inventory != null && spawnSpot.inventory.stackSize >= spawnSpot.inventory.maxStackSize) {
+				furn.CancelJob ();
+			}
+			return;
+		}
+		if (spawnSpot.inventory != null && spawnSpot.inventory.stackSize >= spawnSpot.inventory.maxStackSize) {
+			return;
+		}
+		Tile jobSpot = furn.JobSpotOffset ();
+		if (jobSpot.inventory != null && (jobSpot.inventory.stackSize >= jobSpot.inventory.maxStackSize)) {
+			return;
+		}
+		Job j = new Job (jobSpot, null, Stone_JobComplete, 1f, null, false);
+		furn.AddJob (j);
+	}
+
+	public static void Stone_JobComplete(Job j){
+		World.currentWorld.inventoryManager.PlaceInventory(j.furniture.GetSpawnSpotTile(), new Inventory("Stone Clump", 64, Random.Range(1, 20)));
+		j.furniture.UnregisterDeconstruct (Stone_UpdateAction);
+		j.furniture.Deconstruct ();
+
+	}
+
+	public static void Steel_UpdateAction(Furniture furn, float deltaTime){
+		Tile spawnSpot = furn.GetSpawnSpotTile ();
+		if (furn.JobCount () > 0) {
+			if (spawnSpot.inventory != null && spawnSpot.inventory.stackSize >= spawnSpot.inventory.maxStackSize) {
+				furn.CancelJob ();
+			}
+			return;
+		}
+		if (spawnSpot.inventory != null && spawnSpot.inventory.stackSize >= spawnSpot.inventory.maxStackSize) {
+			return;
+		}
+		Tile jobSpot = furn.JobSpotOffset ();
+		if (jobSpot.inventory != null && (jobSpot.inventory.stackSize >= jobSpot.inventory.maxStackSize)) {
+			return;
+		}
+		Job j = new Job (jobSpot, null, Steel_JobComplete, 1f, null, false);
+		furn.AddJob (j);
+	}
+
+	public static void Steel_JobComplete(Job j){
+		World.currentWorld.inventoryManager.PlaceInventory(j.furniture.GetSpawnSpotTile(), new Inventory("Steel Plate", 64, Random.Range(1, 20)));
+		j.furniture.UnregisterDeconstruct (Steel_UpdateAction);
+		j.furniture.Deconstruct ();
+
+	}
+
 }
